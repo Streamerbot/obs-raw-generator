@@ -76,6 +76,17 @@ async function connect() {
   }
 }
 
+async function disconnect() {
+  error.value = null;
+
+  try {
+    if (isConnected.value) await obs.connect(url.value, password.value);
+    await obs.disconnect();
+  } catch (e) {
+    error.value = e.message;
+  }
+}
+
 function initEventListeners() {
   obs.on('ConnectionClosed', () => isConnected.value = false);
   obs.on('ConnectionError', () => isConnected.value = false);
@@ -153,8 +164,8 @@ function loadLocalStorage() {
             label="Password"
             density="comfortable" hide-details
           />
-          <v-btn v-if="isConnected" color="success">Connected</v-btn>
-          <v-btn v-else @click="connect">Connect</v-btn>
+          <v-btn v-if="isConnected" color="error" @click="disconnect">Disconnect</v-btn>
+          <v-btn v-else color="success" @click="connect">Connect</v-btn>
         </form>
       </div>
 
