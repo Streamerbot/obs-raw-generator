@@ -5,7 +5,7 @@
     "serve": "vite preview",
     "build": "vite build",
     "build-only": "vite build",
-    "dev": "vite",
+    "dev": "vite --host=0.0.0.0",
     "preview": "vite preview --port 4173",
     "type-check": "vue-tsc --noEmit"
   },
