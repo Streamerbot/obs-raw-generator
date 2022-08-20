@@ -1,6 +1,12 @@
 <script lang="ts" setup>
-import OBSWebSocket, { type OBSRequestTypes } from 'obs-websocket-js';
+import OBSWebSocket, { type OBSEventTypes, type OBSRequestTypes } from 'obs-websocket-js';
 import { computed, onMounted, ref, watch } from 'vue';
+
+type Schema = {
+  requests: (keyof OBSRequestTypes)[],
+  events: (keyof OBSEventTypes)[],
+  types: string[],
+};
 
 const obs = new OBSWebSocket();
 
@@ -11,9 +17,15 @@ const password = ref<string>('');
 const error = ref<string | null>();
 const isConnected = ref<boolean>(false);
 
-const schema = ref({
-  requests: ['GetCurrentProgramScene', 'RequestStatus'],
-  events: ['CurrentProgramSceneChanged'],
+const schema = ref<Schema>({
+  requests: [
+    'GetCurrentProgramScene',
+    'GetCurrentPreviewScene',
+  ],
+  events: [
+    'CurrentProgramSceneChanged',
+    'CurrentPreviewSceneChanged',
+  ],
   types: [
     "String",
     "Number",
@@ -133,17 +145,17 @@ function loadLocalStorage() {
       <div style="grid-area: header">
         <h2>Config</h2>
         <form class="d-flex align-center">
-          <v-text-field v-model="host" type="text" label="Host" density="comfortable" />
-          <v-text-field v-model.number="port" type="number"  label="Port" density="comfortable" />
+          <v-text-field v-model="host" type="text" label="Host" density="comfortable" hide-details />
+          <v-text-field v-model.number="port" type="number"  label="Port" density="comfortable" hide-details />
           <v-text-field
             v-model="password"
             type="password"
             label="Password"
-            density="comfortable"
+            density="comfortable" hide-details
           />
+          <v-btn v-if="isConnected" color="success">Connected</v-btn>
+          <v-btn v-else @click="connect">Connect</v-btn>
         </form>
-        <v-btn v-if="isConnected" color="success">Connected</v-btn>
-        <v-btn v-else @click="connect">Connect</v-btn>
       </div>
 
       <div class="mt-5">
@@ -164,16 +176,15 @@ function loadLocalStorage() {
             class="d-flex align-center"
             v-for="(param, index) in selectedParams[selectedName]"
           >
-            <v-select v-model="param.type" :items="schema.types" density="comfortable"></v-select>
-            <v-text-field v-model="param.name" label="Name" density="comfortable"/>
-            <v-text-field v-model="param.value" label="Value" density="comfortable"/>
+            <v-select v-model="param.type" :items="schema.types" label="Type" density="comfortable" hide-details></v-select>
+            <v-text-field v-model="param.name" label="Name" density="comfortable" hide-details/>
+            <v-text-field v-model="param.value" label="Value" density="comfortable" hide-details/>
             <v-btn icon size="x-small" @click="removeParam(index)">
               <v-icon size="small">mdi-trash-can-outline</v-icon>
             </v-btn>
           </div>
-
-          <v-btn v-if="selectedName != ''" @click="sendRequest">Send Request</v-btn>
         </form>
+        <v-btn v-if="selectedName != ''" class="my-3" @click="sendRequest">Send Request</v-btn>
 
         <div class="my-3">
           <pre><code>{{ formattedRequest }}</code></pre>
