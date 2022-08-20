@@ -211,7 +211,7 @@ async function connect() {
     if (isConnected.value) await obs.disconnect();
     await obs.connect(url.value, password.value);
   } catch (e) {
-    error.value = e.message;
+    error.value = e.message || 'Connection error';
   }
 }
 
@@ -219,7 +219,6 @@ async function disconnect() {
   error.value = null;
 
   try {
-    if (isConnected.value) await obs.connect(url.value, password.value);
     await obs.disconnect();
   } catch (e) {
     error.value = e.message;
