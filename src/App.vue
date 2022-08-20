@@ -1,14 +1,20 @@
-<script setup lang="ts">
-import Tester from "./components/Tester.vue";
-
-</script>
-
 <template>
-  <main>
-    <Tester></Tester>
-  </main>
+  <v-app>
+    <v-main>
+      <Tester />
+    </v-main>
+  </v-app>
 </template>
 
-<style scoped>
+<script lang="ts">
+import { defineComponent } from 'vue';
+import Tester from './components/Tester.vue';
 
-</style>
+export default defineComponent({
+  name: 'App',
+
+  components: {
+    Tester
+  },
+})
+</script>

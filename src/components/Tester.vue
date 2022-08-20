@@ -8,6 +8,8 @@ const host = ref<string>('127.0.0.1');
 const port = ref<number>(4455);
 const url = computed<string>(() => `ws://${host.value}:${port.value}`);
 const password = ref<string>('');
+const error = ref<string | null>();
+const isConnected = ref<boolean>(false);
 
 const schema = ref({
   requests: ['GetCurrentProgramScene', 'RequestStatus'],
@@ -25,7 +27,8 @@ const emits = ref([]);
 
 onMounted(() => {
   loadLocalStorage();
-  obsLogin();
+  initEventListeners();
+  connect();
 });
 
 const formattedRequest = computed(() => {
@@ -50,8 +53,21 @@ watch(selectedParams, (newValue) => {
   saveLocalStorage();
 }, { deep: true });
 
-async function obsLogin() {
-  await obs.connect(url.value, password.value);
+async function connect() {
+  error.value = null;
+
+  try {
+    if (isConnected.value) await obs.disconnect();
+    await obs.connect(url.value, password.value);
+  } catch (e) {
+    error.value = e.message;
+  }
+}
+
+function initEventListeners() {
+  obs.on('ConnectionClosed', () => isConnected.value = false);
+  obs.on('ConnectionError', () => isConnected.value = false);
+  obs.on('ConnectionOpened', () => isConnected.value = true);
 }
 
 async function sendRequest() {
@@ -110,59 +126,61 @@ function loadLocalStorage() {
 </script>
 
 <template>
-  <div id="app">
-    <div class="grid">
+  <v-container>
+    <div>
+      <v-alert v-if="error" type="error" density="compact" class="mb-3">{{ error }}</v-alert>
+
       <div style="grid-area: header">
         <h2>Config</h2>
-        <form class="login form" v-on:submit.prevent="obsLogin()">
-          <input type="text" v-model="host" placeholder="Host" />
-          <input type="number" v-model.number="port" placeholder="Port" />
-          <input
-            type="password"
+        <form class="d-flex align-center">
+          <v-text-field v-model="host" type="text" label="Host" density="comfortable" />
+          <v-text-field v-model.number="port" type="number"  label="Port" density="comfortable" />
+          <v-text-field
             v-model="password"
-            placeholder="Password"
+            type="password"
+            label="Password"
+            density="comfortable"
           />
-          <button type="submit">Connect</button>
         </form>
+        <v-btn v-if="isConnected" color="success">Connected</v-btn>
+        <v-btn v-else @click="connect">Connect</v-btn>
       </div>
 
-      <div style="grid-area: left-top">
+      <div class="mt-5">
         <h2>Request</h2>
-        <form class="request form" v-on:submit.prevent="sendRequest()">
-          <label>Request Type:</label>
-          <select v-model="selectedName">
-            <option v-for="request in schema.requests">{{ request }}</option>
-          </select>
+        <form>
+          <v-select v-model="selectedName" :items="schema.requests" label="Request Type"></v-select>
 
-          <button
+          <v-btn
             v-if="selectedName != ''"
-            v-on:click="addParam()"
+            @click="addParam()"
             type="button"
+            class="my-2"
           >
             Add Param
-          </button>
+          </v-btn>
 
           <div
-            class="param"
+            class="d-flex align-center"
             v-for="(param, index) in selectedParams[selectedName]"
           >
-            <select v-model="param.type">
-              <option v-for="type in schema.types">{{ type }}</option>
-            </select>
-            <input type="text" v-model="param.name" placeholder="Name" />
-            <input type="text" v-model="param.value" placeholder="Value" />
-            <button v-on:click="removeParam(index)" type="button">x</button>
+            <v-select v-model="param.type" :items="schema.types" density="comfortable"></v-select>
+            <v-text-field v-model="param.name" label="Name" density="comfortable"/>
+            <v-text-field v-model="param.value" label="Value" density="comfortable"/>
+            <v-btn icon size="x-small" @click="removeParam(index)">
+              <v-icon size="small">mdi-trash-can-outline</v-icon>
+            </v-btn>
           </div>
 
-          <button v-if="selectedName != ''" type="submit">Send Request</button>
+          <v-btn v-if="selectedName != ''" @click="sendRequest">Send Request</v-btn>
         </form>
 
-        <div class="request raw">
-          <pre>{{ formattedRequest }}</pre>
+        <div class="my-3">
+          <pre><code>{{ formattedRequest }}</code></pre>
         </div>
       </div>
 
-      <div style="grid-area: right-top">
+      <div class="my-3">
         <h2>Response</h2>
         <div class="response">
           <pre><code>{{ response }}</code></pre>
@@ -179,5 +197,5 @@ function loadLocalStorage() {
         </div>
       </div>
     </div>
-  </div>
+  </v-container>
 </template>
