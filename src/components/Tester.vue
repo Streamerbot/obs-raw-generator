@@ -3,6 +3,7 @@ import {
 obsRequestTypeOptions,
 type ObsRequestTypeOption
 } from '@/common/obs.constants';
+import { useStorage } from '@vueuse/core';
 import OBSWebSocket, {
 type OBSEventTypes,
 type OBSRequestTypes
@@ -17,8 +18,8 @@ type Schema = {
 
 const obs = new OBSWebSocket();
 
-const host = ref<string>('127.0.0.1');
-const port = ref<number>(4455);
+const host = useStorage('obs-store:host', '127.0.0.1');
+const port = useStorage('obs-store:port', 4455);
 const url = computed<string>(() => `ws://${host.value}:${port.value}`);
 const password = ref<string>('');
 const error = ref<string | null>();
@@ -54,12 +55,11 @@ const requestItems = computed<Array<ObsRequestTypeOption | { header: string }>>(
   }
 );
 const selectedRequest = ref<keyof OBSRequestTypes>();
-const selectedParams = ref<Record<string, any[]>>({});
+const selectedParams = useStorage<Record<string, any[]>>('obs-store:params', {});
 const response = ref<any>({});
 const emits = ref([]);
 
 onMounted(() => {
-  loadLocalStorage();
   initEventListeners();
   connect();
 });
@@ -86,17 +86,8 @@ watch(selectedRequest, (newValue) => {
     selectedParams.value = Object.assign(selectedParams.value, {
       [newValue]: [],
     });
-    addParam();
   }
 });
-
-watch(
-  selectedParams,
-  (newValue) => {
-    saveLocalStorage();
-  },
-  { deep: true }
-);
 
 async function connect() {
   error.value = null;
@@ -173,20 +164,6 @@ function getFormattedRequestInternal() {
 
   return resp;
 }
-
-function saveLocalStorage() {
-  if (Object.keys(selectedParams.value).length) {
-    localStorage.setItem('obs-store', JSON.stringify(selectedParams.value));
-    localStorage.setItem('obs-store:host', host.value);
-    localStorage.setItem('obs-store:port', `${port.value}`);
-  }
-}
-
-function loadLocalStorage() {
-  selectedParams.value = JSON.parse(localStorage.getItem('obs-store') || '{}');
-  host.value = localStorage.getItem('obs-store:host') || '127.0.0.1';
-  port.value = Number(localStorage.getItem('obs-store:port') || 4455);
-}
 </script>
 
 <template>
@@ -246,8 +223,14 @@ function loadLocalStorage() {
             clearable
           >
             <template v-slot:item="{ props, item }">
-              <v-list-subheader v-if="item.raw.header" :key="props.key" class="bg-grey-darken-3">
-                <span class="text-uppercase font-weight-bold">{{ item.raw.header }}</span>
+              <v-list-subheader
+                v-if="item.raw.header"
+                :key="props.key"
+                class="bg-grey-darken-3"
+              >
+                <span class="text-uppercase font-weight-bold">{{
+                  item.raw.header
+                }}</span>
               </v-list-subheader>
               <v-list-item
                 v-else
@@ -296,7 +279,12 @@ function loadLocalStorage() {
             </v-btn>
           </div>
         </form>
-        <v-btn class="my-3" color="success" :disabled="!selectedRequest" @click="sendRequest">
+        <v-btn
+          class="my-3"
+          color="success"
+          :disabled="!selectedRequest"
+          @click="sendRequest"
+        >
           Send Request
         </v-btn>
 
