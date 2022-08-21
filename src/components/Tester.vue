@@ -184,7 +184,8 @@ const schema = ref<Schema>({
     "Boolean"
   ]
 });
-const selectedName = ref<keyof OBSRequestTypes>('GetCurrentProgramScene');
+//const selectedName = ref<keyof OBSRequestTypes>('GetCurrentProgramScene');
+const selectedName = "--- General Requests ---"
 const selectedParams = ref<Record<string, any[]>>({});
 const response = ref<any>({});
 const emits = ref([]);
