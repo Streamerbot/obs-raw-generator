@@ -2,7 +2,7 @@ import type { OBSRequestTypes } from 'obs-websocket-js';
 
 export enum ObsRequestTypeGroup {
   GENERAL = 'General',
-  CONFIG = 'Config',
+  CONFIG = 'Configuration',
   SOURCE = 'Sources',
   SCENE = 'Scenes',
   INPUT = 'Inputs',

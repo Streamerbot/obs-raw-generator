@@ -9,6 +9,7 @@ type OBSEventTypes,
 type OBSRequestTypes
 } from 'obs-websocket-js';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import CodePreview from './CodePreview.vue';
 
 type Schema = {
   requests?: (keyof OBSRequestTypes)[];
@@ -55,7 +56,10 @@ const requestItems = computed<Array<ObsRequestTypeOption | { header: string }>>(
   }
 );
 const selectedRequest = ref<keyof OBSRequestTypes>();
-const selectedParams = useStorage<Record<string, any[]>>('obs-store:params', {});
+const selectedParams = useStorage<Record<string, any[]>>(
+  'obs-store:params',
+  {}
+);
 const response = ref<any>({});
 const emits = ref([]);
 
@@ -288,16 +292,12 @@ function getFormattedRequestInternal() {
           Send Request
         </v-btn>
 
-        <div class="my-3 bg-grey-darken-4">
-          <pre><code>{{ formattedRequest }}</code></pre>
-        </div>
+        <code-preview :value="formattedRequest"></code-preview>
       </div>
 
       <div class="my-3">
         <h2>Response</h2>
-        <div class="bg-grey-darken-4">
-          <pre><code>{{ response }}</code></pre>
-        </div>
+        <code-preview :value="response"></code-preview>
       </div>
 
       <!-- <div style="grid-area: footer">
