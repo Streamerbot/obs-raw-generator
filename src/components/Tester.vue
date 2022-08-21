@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import {
+ObsParamType,
+obsParamTypeOptions,
 obsRequestTypeOptions,
 type ObsRequestTypeOption
 } from '@/common/obs.constants';
@@ -25,12 +27,6 @@ const url = computed<string>(() => `ws://${host.value}:${port.value}`);
 const password = ref<string>('');
 const error = ref<string | null>();
 const isConnected = ref<boolean>(false);
-
-// TODO: remove this
-const schema = ref<Schema>({
-  events: ['CurrentProgramSceneChanged', 'CurrentPreviewSceneChanged'],
-  types: ['String', 'Number', 'Boolean'],
-});
 
 // add group headers for request autocomplete
 const requestItems = computed<Array<ObsRequestTypeOption | { header: string }>>(
@@ -61,7 +57,6 @@ const selectedParams = useStorage<Record<string, any[]>>(
   {}
 );
 const response = ref<any>({});
-const emits = ref([]);
 
 onMounted(() => {
   initEventListeners();
@@ -80,8 +75,6 @@ const formattedRequest = computed(() => {
 
   return resp;
 });
-
-const reverseEmits = computed(() => emits.value.slice().reverse());
 
 watch(selectedRequest, (newValue) => {
   if (!newValue) return;
@@ -137,7 +130,7 @@ function addParam() {
   if (!selectedRequest.value) return;
 
   selectedParams.value[selectedRequest.value].push({
-    type: 'String',
+    type: ObsParamType.STRING,
     name: '',
     value: '',
   });
@@ -157,9 +150,9 @@ function getFormattedRequestInternal() {
   let resp: Record<string, any> = {};
 
   selectedParams.value[selectedRequest.value].forEach((param) => {
-    if (param.type === 'Number') {
+    if (param.type === ObsParamType.NUMBER) {
       resp[param.name] = Number(param.value);
-    } else if (param.type === 'Boolean') {
+    } else if (param.type === ObsParamType.BOOLEAN) {
       resp[param.name] = Boolean(param.value);
     } else {
       resp[param.name] = param.value;
@@ -204,10 +197,10 @@ function getFormattedRequestInternal() {
             hide-details
             :disabled="isConnected"
           />
-          <v-btn v-if="isConnected" color="error" @click="disconnect"
+          <v-btn v-if="isConnected" color="error" variant="text" class="ml-2" @click="disconnect"
             >Disconnect</v-btn
           >
-          <v-btn v-else color="success" @click="connect">Connect</v-btn>
+          <v-btn v-else color="success" variant="text" class="ml-2" @click="connect">Connect</v-btn>
         </form>
       </div>
 
@@ -223,10 +216,9 @@ function getFormattedRequestInternal() {
             item-value="name"
             :disabled="!isConnected"
             menu-icon="mdi-chevron-down"
-            :transition="false"
             clearable
           >
-            <template v-slot:item="{ props, item }">
+            <template #item="{ props, item }">
               <v-list-subheader
                 v-if="item.raw.header"
                 :key="props.key"
@@ -246,14 +238,10 @@ function getFormattedRequestInternal() {
             </template>
           </v-autocomplete>
 
-          <v-btn
-            v-if="selectedRequest != ''"
-            @click="addParam()"
-            type="button"
-            class="my-2"
-          >
-            Add Param
-          </v-btn>
+          <code-preview
+            v-if="selectedRequest"
+            :value="formattedRequest"
+          ></code-preview>
 
           <div
             class="d-flex align-center"
@@ -261,7 +249,7 @@ function getFormattedRequestInternal() {
           >
             <v-select
               v-model="param.type"
-              :items="schema.types"
+              :items="obsParamTypeOptions"
               label="Type"
               density="comfortable"
               hide-details
@@ -278,37 +266,37 @@ function getFormattedRequestInternal() {
               density="comfortable"
               hide-details
             />
-            <v-btn icon size="x-small" @click="removeParam(index)">
-              <v-icon size="small">mdi-trash-can-outline</v-icon>
+            <v-btn icon variant="plain" size="small" class="ml-2" @click="removeParam(index)">
+              <v-icon size="small">mdi-close-circle</v-icon>
             </v-btn>
           </div>
         </form>
-        <v-btn
-          class="my-3"
-          color="success"
-          :disabled="!selectedRequest"
-          @click="sendRequest"
-        >
-          Send Request
-        </v-btn>
 
-        <code-preview :value="formattedRequest"></code-preview>
+        <div class="d-flex align-center">
+          <v-btn
+            v-if="selectedRequest != ''"
+            @click="addParam()"
+            type="button"
+            class="my-2"
+            :disabled="!isConnected || !selectedRequest"
+          >
+            Add Param
+          </v-btn>
+          <v-btn
+            class="my-3"
+            color="success"
+            :disabled="!selectedRequest"
+            @click="sendRequest"
+          >
+            Send Request
+          </v-btn>
+        </div>
       </div>
 
       <div class="my-3">
         <h2>Response</h2>
         <code-preview :value="response"></code-preview>
       </div>
-
-      <!-- <div style="grid-area: footer">
-        <h2>Events</h2>
-        <div class="events">
-          <div class="event" v-for="emit in reverseEmits">
-            <b>{{ emit.event }} - {{ emit.timestamp | date('%T') }}</b>
-            <pre>{{ emit.data }}</pre>
-          </div>
-        </div>
-      </div> -->
     </div>
   </v-container>
 </template>

@@ -1,5 +1,17 @@
 import type { OBSRequestTypes } from 'obs-websocket-js';
 
+export enum ObsParamType {
+  STRING = 'String',
+  NUMBER = 'Number',
+  BOOLEAN = 'Boolean'
+}
+
+export const obsParamTypeOptions = [
+  { title: ObsParamType.STRING, value: ObsParamType.STRING },
+  { title: ObsParamType.NUMBER, value: ObsParamType.NUMBER },
+  { title: ObsParamType.BOOLEAN, value: ObsParamType.BOOLEAN },
+];
+
 export enum ObsRequestTypeGroup {
   GENERAL = 'General',
   CONFIG = 'Configuration',
