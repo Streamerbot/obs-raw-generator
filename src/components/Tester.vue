@@ -51,7 +51,7 @@ const requestItems = computed<Array<ObsRequestTypeOption | { header: string }>>(
     return items;
   }
 );
-const selectedRequest = ref<keyof OBSRequestTypes>();
+const selectedRequest = ref<ObsRequestTypeOption>();
 const selectedParams = useStorage<Record<string, any[]>>(
   'obs-store:params',
   {}
@@ -70,19 +70,33 @@ onUnmounted(() => {
 const formattedRequest = computed(() => {
   let resp = getFormattedRequestInternal() || {};
 
-  resp['request-type'] = selectedRequest.value;
+  resp['request-type'] = selectedRequest.value?.name;
   resp['message-id'] = '123';
 
   return resp;
 });
 
-watch(selectedRequest, (newValue) => {
-  if (!newValue) return;
+watch(selectedRequest, (val, prev) => {
+  if (!val) return;
 
-  if (!selectedParams.value[newValue]) {
+  if (val?.name !== prev?.name) response.value = '';
+
+  const defaultParams =
+    val.params?.map((param) => ({ ...param, value: null })) ?? [];
+
+  if (
+    !selectedParams.value[val.name] ||
+    !Array.isArray(selectedParams.value[val.name])
+  ) {
     selectedParams.value = Object.assign(selectedParams.value, {
-      [newValue]: [],
+      [val.name]: defaultParams,
     });
+  }
+
+  for (const param of defaultParams) {
+    if (!selectedParams.value[val.name].find((p) => p.name === param.name)) {
+      selectedParams.value[val.name].push({ ...param, value: null });
+    }
   }
 });
 
@@ -118,7 +132,7 @@ async function sendRequest() {
 
   try {
     response.value = await obs.call(
-      selectedRequest.value,
+      selectedRequest.value.name,
       getFormattedRequestInternal()
     );
   } catch (e) {
@@ -129,7 +143,7 @@ async function sendRequest() {
 function addParam() {
   if (!selectedRequest.value) return;
 
-  selectedParams.value[selectedRequest.value].push({
+  selectedParams.value[selectedRequest.value.name].push({
     type: ObsParamType.STRING,
     name: '',
     value: '',
@@ -139,17 +153,20 @@ function addParam() {
 function removeParam(index: number) {
   if (!selectedRequest.value) return;
 
-  selectedParams.value[selectedRequest.value].splice(index, 1);
+  selectedParams.value[selectedRequest.value.name].splice(index, 1);
 }
 
 function getFormattedRequestInternal() {
-  if (!selectedRequest.value || !selectedParams.value[selectedRequest.value]) {
+  if (
+    !selectedRequest.value ||
+    !selectedParams.value[selectedRequest.value.name]
+  ) {
     return {};
   }
 
   let resp: Record<string, any> = {};
 
-  selectedParams.value[selectedRequest.value].forEach((param) => {
+  selectedParams.value[selectedRequest.value.name].forEach((param) => {
     if (param.type === ObsParamType.NUMBER) {
       resp[param.name] = Number(param.value);
     } else if (param.type === ObsParamType.BOOLEAN) {
@@ -197,10 +214,22 @@ function getFormattedRequestInternal() {
             hide-details
             :disabled="isConnected"
           />
-          <v-btn v-if="isConnected" color="error" variant="text" class="ml-2" @click="disconnect"
+          <v-btn
+            v-if="isConnected"
+            color="error"
+            variant="text"
+            class="ml-2"
+            @click="disconnect"
             >Disconnect</v-btn
           >
-          <v-btn v-else color="success" variant="text" class="ml-2" @click="connect">Connect</v-btn>
+          <v-btn
+            v-else
+            color="success"
+            variant="text"
+            class="ml-2"
+            @click="connect"
+            >Connect</v-btn
+          >
         </form>
       </div>
 
@@ -214,6 +243,7 @@ function getFormattedRequestInternal() {
             density="comfortable"
             item-title="name"
             item-value="name"
+            return-object
             :disabled="!isConnected"
             menu-icon="mdi-chevron-down"
             clearable
@@ -244,8 +274,9 @@ function getFormattedRequestInternal() {
           ></code-preview>
 
           <div
+            v-if="selectedRequest"
             class="d-flex align-center"
-            v-for="(param, index) in selectedParams[selectedRequest]"
+            v-for="(param, index) in selectedParams[selectedRequest.name]"
           >
             <v-select
               v-model="param.type"
@@ -253,12 +284,14 @@ function getFormattedRequestInternal() {
               label="Type"
               density="comfortable"
               hide-details
+              :disabled="param.required"
             ></v-select>
             <v-text-field
               v-model="param.name"
               label="Name"
               density="comfortable"
               hide-details
+              :disabled="param.required"
             />
             <v-text-field
               v-model="param.value"
@@ -266,7 +299,14 @@ function getFormattedRequestInternal() {
               density="comfortable"
               hide-details
             />
-            <v-btn icon variant="plain" size="small" class="ml-2" @click="removeParam(index)">
+            <v-btn
+              icon
+              variant="plain"
+              size="small"
+              class="ml-2"
+              :disabled="param.required"
+              @click="removeParam(index)"
+            >
               <v-icon size="small">mdi-close-circle</v-icon>
             </v-btn>
           </div>
@@ -274,7 +314,7 @@ function getFormattedRequestInternal() {
 
         <div class="d-flex align-center">
           <v-btn
-            v-if="selectedRequest != ''"
+            v-if="selectedRequest"
             @click="addParam()"
             type="button"
             class="my-2"
