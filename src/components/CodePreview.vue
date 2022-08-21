@@ -20,7 +20,7 @@ function copyText() {
 </script>
 
 <template>
-  <div class="bg-grey-darken-4 my-3 pa-3 position-relative">
+  <div class="bg-grey-darken-4 my-3 pa-3 position-relative" style="min-height: 3rem;">
     <pre><code>{{ value }}</code></pre>
     <span class="position-absolute" style="top: 0.5rem; right: 0.5rem">
       <v-tooltip location="top">
