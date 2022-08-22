@@ -329,7 +329,7 @@ function getFormattedRequestInternal() {
           <v-btn
             class="my-3"
             color="success"
-            :disabled="!selectedRequest"
+            :disabled="!isConnected || !selectedRequest"
             @click="sendRequest"
           >
             Send Request
