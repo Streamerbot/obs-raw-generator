@@ -25,6 +25,7 @@ const host = useStorage('obs-store:host', '127.0.0.1');
 const port = useStorage('obs-store:port', 4455);
 const url = computed<string>(() => `ws://${host.value}:${port.value}`);
 const password = ref<string>('');
+const connecting = ref<boolean>(false);
 const error = ref<string | null>();
 const isConnected = ref<boolean>(false);
 
@@ -102,12 +103,15 @@ watch(selectedRequest, (val, prev) => {
 
 async function connect() {
   error.value = null;
+  connecting.value = true;
 
   try {
     if (isConnected.value) await obs.disconnect();
     await obs.connect(url.value, password.value);
   } catch (e: Error) {
     error.value = e.message || 'Connection error';
+  } finally {
+    connecting.value = false;
   }
 }
 
@@ -227,6 +231,7 @@ function getFormattedRequestInternal() {
             color="success"
             variant="text"
             class="ml-2"
+            :loading="connecting"
             @click="connect"
             >Connect</v-btn
           >
@@ -244,7 +249,6 @@ function getFormattedRequestInternal() {
             item-title="name"
             item-value="name"
             return-object
-            :disabled="!isConnected"
             menu-icon="mdi-chevron-down"
             clearable
           >
@@ -318,7 +322,7 @@ function getFormattedRequestInternal() {
             @click="addParam()"
             type="button"
             class="my-2"
-            :disabled="!isConnected || !selectedRequest"
+            :disabled="!selectedRequest"
           >
             Add Param
           </v-btn>
