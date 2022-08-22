@@ -249,7 +249,6 @@ function getFormattedRequestInternal() {
             item-title="name"
             item-value="name"
             return-object
-            :disabled="!isConnected"
             menu-icon="mdi-chevron-down"
             clearable
           >
@@ -323,7 +322,7 @@ function getFormattedRequestInternal() {
             @click="addParam()"
             type="button"
             class="my-2"
-            :disabled="!isConnected || !selectedRequest"
+            :disabled="!selectedRequest"
           >
             Add Param
           </v-btn>
