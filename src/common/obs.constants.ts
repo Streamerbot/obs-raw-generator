@@ -3,13 +3,15 @@ import type { OBSRequestTypes } from 'obs-websocket-js';
 export enum ObsParamType {
   STRING = 'String',
   NUMBER = 'Number',
-  BOOLEAN = 'Boolean'
+  BOOLEAN = 'Boolean',
+  OBJECT = 'Object'
 }
 
 export const obsParamTypeOptions = [
   { title: ObsParamType.STRING, value: ObsParamType.STRING },
   { title: ObsParamType.NUMBER, value: ObsParamType.NUMBER },
   { title: ObsParamType.BOOLEAN, value: ObsParamType.BOOLEAN },
+  { title: ObsParamType.OBJECT, value: ObsParamType.OBJECT },
 ];
 
 export enum ObsRequestTypeGroup {
@@ -54,22 +56,30 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
   },
   {
     name: 'BroadcastCustomEvent',
-    description: '',
+    description: 'Broadcasts a CustomEvent to all WebSocket clients.',
     group: ObsRequestTypeGroup.GENERAL,
+    params: [
+      { name: 'eventData', type: ObsParamType.OBJECT, required: true }
+    ]
   },
   {
     name: 'CallVendorRequest',
-    description: '',
+    description: 'Call a request registered to a vendor.',
     group: ObsRequestTypeGroup.GENERAL,
+    params: [
+      { name: 'vendorName', type: ObsParamType.STRING, required: true },
+      { name: 'requestType', type: ObsParamType.STRING, required: true },
+      { name: 'requestData', type: ObsParamType.OBJECT, required: true }
+    ]
   },
   {
     name: 'GetHotkeyList',
-    description: '',
+    description: 'Retrieves a list of all available hotkey names.',
     group: ObsRequestTypeGroup.GENERAL,
   },
   {
     name: 'TriggerHotkeyByName',
-    description: 'Triggers a hotkey using its name',
+    description: 'Triggers a hotkey using its name.',
     group: ObsRequestTypeGroup.GENERAL,
     params: [
       { name: 'hotkeyName', type: ObsParamType.STRING, required: true }
@@ -77,77 +87,130 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
   },
   {
     name: 'TriggerHotkeyByKeySequence',
-    description: '',
+    description: 'Triggers a hotkey using a sequence of keys.',
     group: ObsRequestTypeGroup.GENERAL,
+    params: [
+      { name: 'keyId', type: ObsParamType.STRING, required: true },
+      { name: 'keyModifiers', type: ObsParamType.OBJECT, required: true },
+      { name: 'shift', type: ObsParamType.BOOLEAN, required: true },
+      { name: 'control', type: ObsParamType.BOOLEAN, required: true },
+      { name: 'alt', type: ObsParamType.BOOLEAN, required: true },
+      { name: 'command', type: ObsParamType.BOOLEAN, required: true }
+    ]
   },
-  { name: 'Sleep', description: '', group: ObsRequestTypeGroup.GENERAL },
+  {
+    name: 'Sleep',
+    description: 'Sleeps for a time duration or number of frames. Only available in request batches with types SERIAL_REALTIME or SERIAL_FRAME.',
+    group: ObsRequestTypeGroup.GENERAL,
+    params: [
+      { name: 'sleepMillis', type: ObsParamType.NUMBER, required: false },
+      { name: 'sleepFrames', type: ObsParamType.NUMBER, required: false },
+    ]
+  },
 
   {
     name: 'GetPersistentData',
-    description: '',
+    description: 'Gets the value of a \"slot\" from the selected persistent data realm.',
     group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'realm', type: ObsParamType.STRING, required: true },
+      { name: 'slotName', type: ObsParamType.STRING, required: true },
+    ]
   },
   {
     name: 'SetPersistentData',
-    description: '',
+    description: 'Sets the value of a \"slot\" from the selected persistent data realm.',
     group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'realm', type: ObsParamType.STRING, required: true },
+      { name: 'slotName', type: ObsParamType.STRING, required: true },
+      { name: 'slotValue', type: ObsParamType.STRING, required: true },
+    ]
   },
-  {
-    name: 'GetSceneCollectionList',
-    description: '',
-    group: ObsRequestTypeGroup.CONFIG,
-  },
+  {name: 'GetSceneCollectionList',description: 'Gets an array of all scene collections.',group: ObsRequestTypeGroup.CONFIG,},
   {
     name: 'SetCurrentSceneCollection',
-    description: '',
+    description: 'Switches to a scene collection.',
     group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'sceneCollectionName', type: ObsParamType.STRING, required: true },
+    ]
   },
   {
     name: 'CreateSceneCollection',
-    description: '',
+    description: 'Creates a new scene collection, switching to it in the process. Note: This will block until the collection has finished changing.',
     group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'sceneCollectionName', type: ObsParamType.STRING, required: true },
+    ]
   },
-  {
-    name: 'GetProfileList',
-    description: '',
-    group: ObsRequestTypeGroup.CONFIG,
-  },
+  { name: 'GetProfileList', description: 'Gets an array of all profiles.', group: ObsRequestTypeGroup.CONFIG,},
   {
     name: 'SetCurrentProfile',
-    description: '',
+    description: 'Switches to a profile.',
     group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'profileName', type: ObsParamType.STRING, required: true },
+    ]
   },
-  { name: 'CreateProfile', description: '', group: ObsRequestTypeGroup.CONFIG },
-  { name: 'RemoveProfile', description: '', group: ObsRequestTypeGroup.CONFIG },
+  { 
+    name: 'CreateProfile', 
+    description: 'Creates a new profile, switching to it in the process',
+    group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'profileName', type: ObsParamType.STRING, required: true },
+    ]
+  },
+  {
+    name: 'RemoveProfile',
+    description: 'Removes a profile. If the current profile is chosen, it will change to a different profile first.',
+    group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'profileName', type: ObsParamType.STRING, required: true },
+    ]
+  },
   {
     name: 'GetProfileParameter',
-    description: '',
+    description: 'Gets a parameter from the current profile\'s configureation',
     group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'parameterCategory', type: ObsParamType.STRING, required: true },
+      { name: 'parameterName', type: ObsParamType.STRING, required: true },
+    ]
   },
   {
     name: 'SetProfileParameter',
-    description: '',
+    description: 'Sets the value of a parameter in the current profile\'s configuration.',
     group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'parameterCategory', type: ObsParamType.STRING, required: true },
+      { name: 'parameterName', type: ObsParamType.STRING, required: true },
+      { name: 'parameterValue', type: ObsParamType.STRING, required: true },
+    ]
   },
-  {
-    name: 'GetVideoSettings',
-    description: '',
-    group: ObsRequestTypeGroup.CONFIG,
-  },
+  { name: 'GetVideoSettings', description: 'Gets the current video settings.', group: ObsRequestTypeGroup.CONFIG, },
   {
     name: 'SetVideoSettings',
-    description: '',
+    description: 'Sets the current video settings. (Note: Fields must be in pairs. Ex. You cannot set baseWidth without also setting baseHeight.)',
     group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'fpsNumerator', type: ObsParamType.NUMBER, required: true },
+      { name: 'fpsDenominator', type: ObsParamType.NUMBER, required: true },
+      { name: 'baseWidth', type: ObsParamType.NUMBER, required: true },
+      { name: 'baseHeight', type: ObsParamType.NUMBER, required: true },
+      { name: 'outputWidth', type: ObsParamType.NUMBER, required: true },
+      { name: 'outputHeight', type: ObsParamType.NUMBER, required: true },
+    ]
   },
-  {
-    name: 'GetStreamServiceSettings',
-    description: '',
-    group: ObsRequestTypeGroup.CONFIG,
-  },
+  { name: 'GetStreamServiceSettings', description: 'Gets the current stream service settings (stream destination).', group: ObsRequestTypeGroup.CONFIG, },
   {
     name: 'SetStreamServiceSettings',
-    description: '',
+    description: 'Sets the current stream service settings (stream destination).',
     group: ObsRequestTypeGroup.CONFIG,
+    params: [
+      { name: 'streamServiceType', type: ObsParamType.STRING, required: true },
+      { name: 'streamServiceSettings', type: ObsParamType.OBJECT, required: true },
+    ]
   },
 
   {
