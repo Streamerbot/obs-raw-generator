@@ -305,130 +305,210 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
     group: ObsRequestTypeGroup.SCENE,
     params: [
       { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene.', required: true },
-      { name: 'transitionName', type: ObsParamType.STRING, description: 'Name of the scene.', required: true },
-      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene.', required: true },
+      { name: 'transitionName', type: ObsParamType.STRING, description: 'Name of the scene transition to use as override. Specify `null` to remove.', required: false },
+      { name: 'transitionDuration', type: ObsParamType.NUMBER, description: 'Duration to use for any overridden transition. Specify `null` to remove.', required: false },
     ]
   },
-
-  { 
+  {
     name: 'GetInputList', 
     description: 'Gets an array of all inputs in OBS', 
-    group: ObsRequestTypeGroup.INPUT 
+    group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputKind', type: ObsParamType.STRING, description: 'Restrict the array to only inputs of the specified kind.', required: false },
+    ]
   },
   {
     name: 'GetInputKindList',
     description: 'Gets an array of all available input kinds in OBS',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'unversioned', type: ObsParamType.BOOLEAN, description: 'true = Return all kinds as unversions, false = Return with version suffixes (if available).', required: false },
+    ]
+  },
+  { name: 'GetSpecialInputs', description: 'Gets the names of all special inputs', group: ObsRequestTypeGroup.INPUT },
+  { 
+    name: 'CreateInput',
+    description: 'Creates a new input, adding it as a scene item to the specified scene', 
+    group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene to add the input to as a scene item.', required: true },
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the new input to create.', required: true },
+      { name: 'inputKind', type: ObsParamType.STRING, description: 'The kind of input to be created.', required: true },
+      { name: 'inputSettings', type: ObsParamType.OBJECT, description: 'Settings object to initialize the input with.', required: false },
+      { name: 'sceneItemEnabled', type: ObsParamType.BOOLEAN, description: 'Whether to set the created scene item to enabled or disabled.', required: false },
+    ]
   },
   {
-    name: 'GetSpecialInputs',
-    description: 'Gets the names of all special inputs',
+    name: 'RemoveInput',
+    description: 'Removes an existing input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to remove.', required: true },
+    ]
   },
-  { 
-    name: 'CreateInput', 
-    description: 'Creates a new input, adding it as a scene item to the specified scene', 
-    group: ObsRequestTypeGroup.INPUT 
-  },
-  { 
-    name: 'RemoveInput', 
-    description: 'Removes an existing input', 
-    group: ObsRequestTypeGroup.INPUT 
-  },
-  { 
-    name: 'SetInputName', 
-    description: 'Sets the name of an input', 
-    group: ObsRequestTypeGroup.INPUT 
+  {
+    name: 'SetInputName',
+    description: 'Sets the name of an input',
+    group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Current input name.', required: true },
+      { name: 'newInputName', type: ObsParamType.STRING, description: 'New name for the input.', required: true },
+    ]
   },
   {
     name: 'GetInputDefaultSettings',
     description: 'Gets the default settings for an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputKind', type: ObsParamType.STRING, description: 'Input kind to get the default settings for.', required: true },
+    ]
   },
   {
     name: 'GetInputSettings',
     description: 'Gets the settings of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to get the settings of.', required: true },
+    ]
   },
   {
     name: 'SetInputSettings',
     description: 'Sets the settings of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to set the settings of.', required: true },
+      { name: 'inputSettings', type: ObsParamType.OBJECT, description: 'Object of settings to apply.', required: true },
+      { name: 'overlay', type: ObsParamType.BOOLEAN, description: 'true = apply the settings on top of existing ones, false = reset the input to its defaults, then apply settings.', required: false },
+    ]
   },
-  { 
-    name: 'GetInputMute', 
-    description: 'Gets the audio mute state of an input', 
-    group: ObsRequestTypeGroup.INPUT 
+  {
+    name: 'GetInputMute',
+    description: 'Gets the audio mute state of an input',
+    group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of input to get the mute state of.', required: true },
+    ]
   },
-  { 
-    name: 'SetInputMute', 
-    description: 'Sets the audio mute state of an input', 
-    group: ObsRequestTypeGroup.INPUT 
+  {
+    name: 'SetInputMute',
+    description: 'Sets the audio mute state of an input',
+    group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to set the mute state of.', required: true },
+      { name: 'inputMuted', type: ObsParamType.BOOLEAN, description: 'Whether to mute the input or not.', required: true },
+    ]
   },
   {
     name: 'ToggleInputMute',
     description: 'Toggles the audio mute state of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to toggle the mute state of.', required: true },
+    ]
   },
-  { 
-    name: 'GetInputVolume', 
-    description: 'Gets the current volume setting of an input', 
-    group: ObsRequestTypeGroup.INPUT 
+  {
+    name: 'GetInputVolume',
+    description: 'Gets the current volume setting of an input',
+    group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to get the volume of.', required: true },
+    ]
   },
-  { 
-    name: 'SetInputVolume', 
-    description: 'Sets the volume setting of an input', 
-    group: ObsRequestTypeGroup.INPUT 
+  {
+    name: 'SetInputVolume',
+    description: 'Sets the volume setting of an input',
+    group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to set the volume of.', required: true },
+      { name: 'inputVolumeMul', type: ObsParamType.NUMBER, description: 'Volume setting in mul.', required: false },
+      { name: 'inputVolumeDb', type: ObsParamType.NUMBER, description: 'Volume setting in dB.', required: false },
+    ]
   },
   {
     name: 'GetInputAudioBalance',
     description: 'Gets the audio balance of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to get the audio balance of.', required: true },
+    ]
   },
   {
     name: 'SetInputAudioBalance',
     description: 'Sets the audio balance of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to set the audio balance of.', required: true },
+      { name: 'inputAudioBalance', type: ObsParamType.NUMBER, description: 'New audio balance value.', required: true },
+    ]
   },
   {
     name: 'GetInputAudioSyncOffset',
-    description: '',
+    description: 'Gets the audio sync offset of an input. Note: The audio synce offset can be negative too.',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to get the audio sync offset of.', required: true },
+    ]
   },
   {
     name: 'SetInputAudioSyncOffset',
-    description: '',
+    description: 'Sets the audio sync offset of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to set the audio sync offset for.', required: true },
+      { name: 'inputAudioSyncOffset', type: ObsParamType.NUMBER, description: 'New audio synce offset in milliseconds.', required: true },
+    ]
   },
   {
     name: 'GetInputAudioMonitorType',
-    description: 'Gets the audio sync offset of an input',
+    description: 'Gets the audio monitor type of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to set the audio monitor of.', required: true },
+    ]
   },
   {
     name: 'SetInputAudioMonitorType',
     description: 'Sets the audio monitor type of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to set the audio monitor type for.', required: true },
+      { name: 'monitorType', type: ObsParamType.STRING, description: 'Audio monitor type.', required: true },
+    ]
   },
   {
     name: 'GetInputAudioTracks',
     description: 'Gets the enable state of all audio tracks of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input.', required: true },
+    ]
   },
   {
     name: 'SetInputAudioTracks',
     description: 'Sets the enable state of audio tracks of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input.', required: true },
+      { name: 'inputAudioTracks', type: ObsParamType.OBJECT, description: 'Track settings to apply.', required: true },
+    ]
   },
   {
     name: 'GetInputPropertiesListPropertyItems',
     description: 'Gets the items of a list property from an input properties',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input.', required: true },
+      { name: 'propertyName', type: ObsParamType.STRING, description: 'Name of the list property to get the items of.', required: true },
+    ]
   },
   {
     name: 'PressInputPropertiesButton',
     description: 'Presses a button in the properties of an input',
     group: ObsRequestTypeGroup.INPUT,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input.', required: true },
+      { name: 'propertyName', type: ObsParamType.STRING, description: 'Name of the button property to press.', required: true },
+    ]
   },
 
   {
