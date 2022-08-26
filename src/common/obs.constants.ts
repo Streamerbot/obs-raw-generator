@@ -45,16 +45,9 @@ export type ObsRequestTypeOption = {
 }
 
 export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
-  {
-    name: 'GetVersion',
-    description: 'Retrieve OBS version information',
-    group: ObsRequestTypeGroup.GENERAL,
-  },
-  {
-    name: 'GetStats',
-    description: 'Retrieve various OBS statistics',
-    group: ObsRequestTypeGroup.GENERAL,
-  },
+  // Lines that are commented out are ones listed in documentation, but don't exist in the source code.
+  { name: 'GetVersion', description: 'Retrieve OBS version information', group: ObsRequestTypeGroup.GENERAL, },
+  { name: 'GetStats', description: 'Retrieve various OBS statistics', group: ObsRequestTypeGroup.GENERAL, },
   {
     name: 'BroadcastCustomEvent',
     description: 'Broadcasts a CustomEvent to all WebSocket clients.',
@@ -240,7 +233,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
     params: [
       { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source to take a screenshot of', required: true },
       { name: 'imageFormat', type: ObsParamType.STRING, description: 'Image compression format to use. Use `GetVersion` to get compatible image formats', required: true },
-      { name: 'imageFilePath', type: ObsParamType.STRING, description: 'Path to save the screenshot file to. Example, `C:\Users\user\Desktop\screenshot.png`', required: true },
+      { name: 'imageFilePath', type: ObsParamType.STRING, description: 'Path to save the screenshot file to. Example, `C:\Users\<user>\Desktop\screenshot.png`', required: true },
       { name: 'imageWidth', type: ObsParamType.NUMBER, description: 'Width to scale the screenshot to', required: false },
       { name: 'imageHeight', type: ObsParamType.NUMBER, description: 'Height to scale the screenshot to', required: false },
       { name: 'imageCompressionQuality', type: ObsParamType.NUMBER, description: 'Compression quality to use. 0 for high compression, 100 for uncompressed.', required: false },
@@ -511,350 +504,393 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
     ]
   },
 
-  {
-    name: 'GetTransitionKindList',
-    description: 'Gets an array of all available transition kinds',
-    group: ObsRequestTypeGroup.TRANSITION,
-  },
-  {
-    name: 'GetSceneTransitionList',
-    description: 'Gets an array of all scene transitions in OBS',
-    group: ObsRequestTypeGroup.TRANSITION,
-  },
-  {
-    name: 'GetCurrentSceneTransition',
-    description: 'Gets information about the current scene transition',
-    group: ObsRequestTypeGroup.TRANSITION,
-  },
+  { name: 'GetTransitionKindList', description: 'Gets an array of all available transition kinds', group: ObsRequestTypeGroup.TRANSITION, },
+  { name: 'GetSceneTransitionList', description: 'Gets an array of all scene transitions in OBS', group: ObsRequestTypeGroup.TRANSITION, },
+  { name: 'GetCurrentSceneTransition', description: 'Gets information about the current scene transition', group: ObsRequestTypeGroup.TRANSITION, },
   {
     name: 'SetCurrentSceneTransition',
     description: 'Sets the current scene transition',
     group: ObsRequestTypeGroup.TRANSITION,
+    params: [
+      { name: 'transitionName', type: ObsParamType.STRING, description: 'Name of the transition to make active.', required: true },
+    ]
   },
   {
     name: 'SetCurrentSceneTransitionDuration',
     description: 'Sets the duration of the current scene transition',
     group: ObsRequestTypeGroup.TRANSITION,
+    params: [
+      { name: 'transitionDuration', type: ObsParamType.NUMBER, description: 'Duration in milliseconds', required: true },
+    ]
   },
   {
     name: 'SetCurrentSceneTransitionSettings',
     description: 'Sets the settings of the current scene transition',
     group: ObsRequestTypeGroup.TRANSITION,
+    params: [
+      { name: 'transitionSettings', type: ObsParamType.OBJECT, description: 'Settings object to apply to the transition. Can be {}', required: true },
+      { name: 'overlay', type: ObsParamType.BOOLEAN, description: 'Whether to overlay over the current settings or replace them.', required: false },
+    ]
   },
-  {
-    name: 'GetCurrentSceneTransitionCursor',
-    description: 'Gets the cursor position of the current scene transition',
-    group: ObsRequestTypeGroup.TRANSITION,
-  },
-  {
-    name: 'TriggerStudioModeTransition',
-    description: 'Triggers the current scene transition',
-    group: ObsRequestTypeGroup.TRANSITION,
-  },
+  { name: 'GetCurrentSceneTransitionCursor', description: 'Gets the cursor position of the current scene transition', group: ObsRequestTypeGroup.TRANSITION, },
+  { name: 'TriggerStudioModeTransition', description: 'Triggers the current scene transition', group: ObsRequestTypeGroup.TRANSITION, },
   {
     name: 'SetTBarPosition',
     description: 'Sets the position of the TBar',
     group: ObsRequestTypeGroup.TRANSITION,
+    params: [
+      { name: 'position', type: ObsParamType.NUMBER, description: 'New position.', required: true },
+      { name: 'release', type: ObsParamType.BOOLEAN, description: 'Whether to release the TBar. Only set to false if you know that you will be sending another position update.', required: false },
+    ]
   },
 
   {
     name: 'GetSourceFilterList',
     description: 'Gets an array of all of a source filters',
     group: ObsRequestTypeGroup.FILTER,
+    params: [
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source.', required: true },
+    ]
   },
   {
     name: 'GetSourceFilterDefaultSettings',
     description: 'Gets the default settings for a filter',
     group: ObsRequestTypeGroup.FILTER,
+    params: [
+      { name: 'filterKind', type: ObsParamType.STRING, description: 'Filter kind to get the default settigns for.', required: true },
+    ]
   },
   {
     name: 'CreateSourceFilter',
     description: 'Creates a new filter, adding it to the specified source',
     group: ObsRequestTypeGroup.FILTER,
+    params: [
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source to add the filter to.', required: true },
+      { name: 'filterName', type: ObsParamType.STRING, description: 'Name of the new filter to be created.', required: true },
+      { name: 'filterKind', type: ObsParamType.STRING, description: 'The kind of filter to be created.', required: true },
+      { name: 'filterSettings', type: ObsParamType.OBJECT, description: 'Settings object to initialize the filter with.', required: false },
+    ]
   },
   {
     name: 'RemoveSourceFilter',
     description: 'Removes a filter from a source',
     group: ObsRequestTypeGroup.FILTER,
+    params: [
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source the filter is on.', required: true },
+      { name: 'filterName', type: ObsParamType.STRING, description: 'Name of the filter to remove.', required: true },
+    ]
   },
   {
     name: 'SetSourceFilterName',
     description: 'Sets the name of a source filter',
     group: ObsRequestTypeGroup.FILTER,
+    params: [
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source the filter is on.', required: true },
+      { name: 'filterName', type: ObsParamType.STRING, description: 'Current name of the filter.', required: true },
+      { name: 'newFilterName', type: ObsParamType.STRING, description: 'New name of the filter.', required: true },
+    ]
   },
   {
     name: 'GetSourceFilter',
     description: 'Gets the info for a specific source filter',
     group: ObsRequestTypeGroup.FILTER,
+    params: [
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source.', required: true },
+      { name: 'filterName', type: ObsParamType.STRING, description: 'Name of the filter.', required: true },
+    ]
   },
   {
     name: 'SetSourceFilterIndex',
     description: 'Sets the index position of a filter on a source',
     group: ObsRequestTypeGroup.FILTER,
+    params: [
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source the filter is on.', required: true },
+      { name: 'filterName', type: ObsParamType.STRING, description: 'Name of the filter.', required: true },
+      { name: 'filterIndex', type: ObsParamType.NUMBER, description: 'New index position of the filter.', required: true },
+    ]
   },
   {
     name: 'SetSourceFilterSettings',
     description: 'Sets the settings of a source filter',
     group: ObsRequestTypeGroup.FILTER,
+    params: [
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source the filter is on.', required: true },
+      { name: 'filterName', type: ObsParamType.STRING, description: 'Name of the filter to set the settings of.', required: true },
+      { name: 'filterSettings', type: ObsParamType.OBJECT, description: 'Object of settings to apply.', required: true },
+      { name: 'overlay', type: ObsParamType.BOOLEAN, description: 'true = apply the settings on top of existing ones, false = reset the input to its default, then apply settings.', required: false },
+    ]
   },
   {
     name: 'SetSourceFilterEnabled',
     description: 'Sets the enable state of a source filter',
     group: ObsRequestTypeGroup.FILTER,
+    params: [
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source the filter is on.', required: true },
+      { name: 'filterName', type: ObsParamType.STRING, description: 'Name of the filter.', required: true },
+      { name: 'filterEnabled', type: ObsParamType.BOOLEAN, description: 'New enable state of the filter.', required: true },
+    ]
   },
 
   {
     name: 'GetSceneItemList',
     description: 'Gets a list of all scene items in a scene',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene to get the items of.', required: true },
+    ]
   },
   {
     name: 'GetGroupSceneItemList',
     description: 'Gets a list of all scene item groups in a scene',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the group to get the items of.', required: true },
+    ]
   },
   {
     name: 'GetSceneItemId',
     description: 'Searches a scene for a source, and returns its id',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene or group to search in.', required: true },
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source to find.', required: true },
+      { name: 'searchOffset', type: ObsParamType.NUMBER, description: 'Number of matches to skip during search. >=0 means first forward, -1 means last (top) item.', required: false },
+    ]
   },
   {
     name: 'CreateSceneItem',
     description: 'Creates a new scene item using a source',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene to create the new item in.', required: true },
+      { name: 'sourceName', type: ObsParamType.STRING, description: 'Name of the source to add to the scene.', required: true },
+      { name: 'sceneItemEnabled', type: ObsParamType.BOOLEAN, description: 'Enable state to apply to the scene item on creation.', required: false },
+    ]
   },
   {
     name: 'RemoveSceneItem',
     description: 'Removes a scene item from a scene',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+    ]
   },
   {
     name: 'DuplicateSceneItem',
     description: 'Duplicates a scene item, copying all transform and crop info',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+      { name: 'destinationSceneName', type: ObsParamType.STRING, description: 'Name of the scene to create the dupicated item in. (`sceneName` is assumed)', required: false },
+    ]
   },
   {
     name: 'GetSceneItemTransform',
     description: 'Gets the transform and crop info of a scene item',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+    ]
   },
   {
     name: 'SetSceneItemTransform',
     description: 'Sets the transform and crop info of a scene item',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+      { name: 'sceneItemTransform', type: ObsParamType.OBJECT, description: 'Object containing scene item transform info to update.', required: true },
+    ]
   },
   {
     name: 'GetSceneItemEnabled',
     description: 'Gets the enable state of a scene item',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+    ]
   },
   {
     name: 'SetSceneItemEnabled',
     description: 'Sets the enable state of a scene item',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+      { name: 'sceneItemEnabled', type: ObsParamType.BOOLEAN, description: 'New enable state of the scene item.', required: true },
+    ]
   },
   {
     name: 'GetSceneItemLocked',
     description: 'Gets the lock state of a scene item',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+    ]
   },
   {
     name: 'SetSceneItemLocked',
     description: 'Sets the lock state of a scene item',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+      { name: 'sceneItemLocked', type: ObsParamType.BOOLEAN, description: 'New lock state of the scene item.', required: true },
+    ]
   },
   {
     name: 'GetSceneItemIndex',
     description: 'Gets the index position of a scene item in a scene',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+    ]
   },
   {
     name: 'SetSceneItemIndex',
     description: 'Sets the index position of a scene item in a scene',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+      { name: 'sceneItemIndex', type: ObsParamType.NUMBER, description: 'New index position of the scene item.', required: true },
+    ]
   },
   {
     name: 'GetSceneItemBlendMode',
     description: 'Gets the blend mode of a scene item',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+    ]
   },
   {
     name: 'SetSceneItemBlendMode',
     description: 'Sets the blend mode of a scene item',
     group: ObsRequestTypeGroup.SCENE_ITEM,
+    params: [
+      { name: 'sceneName', type: ObsParamType.STRING, description: 'Name of the scene the item is in.', required: true },
+      { name: 'sceneItemId', type: ObsParamType.NUMBER, description: 'Numeric ID of the scene item.', required: true },
+      { name: 'sceneItemBlendMode', type: ObsParamType.STRING, description: 'New blend mode.', required: true },
+    ]
   },
 
-  {
-    name: 'GetVirtualCamStatus',
-    description: 'Gets the status of the virtualcam output',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  {
-    name: 'ToggleVirtualCam',
-    description: 'Toggles the state of the virtualcam output',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  {
-    name: 'StartVirtualCam',
-    description: 'Starts the virtualcam output',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  {
-    name: 'StopVirtualCam',
-    description: 'Stops the virtualcam output',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  {
-    name: 'GetReplayBufferStatus',
-    description: 'Gets the status of the replay buffer output',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  {
-    name: 'ToggleReplayBuffer',
-    description: 'Toggles the state of the replay buffer output',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  {
-    name: 'StartReplayBuffer',
-    description: 'Starts the replay buffer output',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  {
-    name: 'StopReplayBuffer',
-    description: 'Stops the replay buffer output',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  {
-    name: 'SaveReplayBuffer',
-    description: 'Saves the contents of the replay buffer output',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  {
-    name: 'GetLastReplayBufferReplay',
-    description: 'Gets the filename of the last replay buffer save file',
-    group: ObsRequestTypeGroup.OUTPUT,
-  },
-  // { name: 'GetOutputList', description: '', group: ObsRequestTypeGroup.OUTPUT },
-  // { name: 'GetOutputStatus', description: '', group: ObsRequestTypeGroup.OUTPUT },
+  { name: 'GetVirtualCamStatus', description: 'Gets the status of the virtualcam output', group: ObsRequestTypeGroup.OUTPUT, },
+  { name: 'ToggleVirtualCam', description: 'Toggles the state of the virtualcam output', group: ObsRequestTypeGroup.OUTPUT, },
+  { name: 'StartVirtualCam', description: 'Starts the virtualcam output', group: ObsRequestTypeGroup.OUTPUT, },
+  { name: 'StopVirtualCam', description: 'Stops the virtualcam output', group: ObsRequestTypeGroup.OUTPUT, },
+  { name: 'GetReplayBufferStatus', description: 'Gets the status of the replay buffer output', group: ObsRequestTypeGroup.OUTPUT, },
+  { name: 'ToggleReplayBuffer', description: 'Toggles the state of the replay buffer output', group: ObsRequestTypeGroup.OUTPUT, },
+  { name: 'StartReplayBuffer', description: 'Starts the replay buffer output', group: ObsRequestTypeGroup.OUTPUT, },
+  { name: 'StopReplayBuffer', description: 'Stops the replay buffer output', group: ObsRequestTypeGroup.OUTPUT, },
+  { name: 'SaveReplayBuffer', description: 'Saves the contents of the replay buffer output', group: ObsRequestTypeGroup.OUTPUT, },
+  { name: 'GetLastReplayBufferReplay', description: 'Gets the filename of the last replay buffer save file', group: ObsRequestTypeGroup.OUTPUT, },
+  // { name: 'GetOutputList', description: 'Gets the list of available outputs.', group: ObsRequestTypeGroup.OUTPUT },
+  // { name: 'GetOutputStatus', description: 'Gets the status of an output', group: ObsRequestTypeGroup.OUTPUT, },
   // { name: 'ToggleOutput', description: '', group: ObsRequestTypeGroup.OUTPUT },
   // { name: 'StartOutput', description: '', group: ObsRequestTypeGroup.OUTPUT },
   // { name: 'StopOutput', description: '', group: ObsRequestTypeGroup.OUTPUT },
   // { name: 'GetOutputSettings', description: '', group: ObsRequestTypeGroup.OUTPUT },
   // { name: 'SetOutputSettings', description: '', group: ObsRequestTypeGroup.OUTPUT },
 
-  {
-    name: 'GetStreamStatus',
-    description: 'Gets the status of the stream output',
-    group: ObsRequestTypeGroup.STREAM,
-  },
-  { 
-    name: 'ToggleStream', 
-    description: 'Toggles the status of the stream output', 
-    group: ObsRequestTypeGroup.STREAM 
-  },
-  { 
-    name: 'StartStream', 
-    description: 'Starts the stream output', 
-    group: ObsRequestTypeGroup.STREAM 
-  },
-  { 
-    name: 'StopStream', 
-    description: 'Stops the stream output', 
-    group: ObsRequestTypeGroup.STREAM 
-  },
+  { name: 'GetStreamStatus', description: 'Gets the status of the stream output', group: ObsRequestTypeGroup.STREAM, },
+  { name: 'ToggleStream', description: 'Toggles the status of the stream output', group: ObsRequestTypeGroup.STREAM },
+  { name: 'StartStream', description: 'Starts the stream output', group: ObsRequestTypeGroup.STREAM },
+  { name: 'StopStream', description: 'Stops the stream output', group: ObsRequestTypeGroup.STREAM },
   {
     name: 'SendStreamCaption',
     description: 'Sends CEA-608 caption text over the stream output',
     group: ObsRequestTypeGroup.STREAM,
+    params: [
+      { name: 'captionText', type: ObsParamType.STRING, description: 'Caption text.', required: true },
+    ]
   },
 
-  {
-    name: 'GetRecordStatus',
-    description: 'Gets the status of the record output',
-    group: ObsRequestTypeGroup.RECORD,
-  },
-  { 
-    name: 'ToggleRecord', 
-    description: 'Toggles the status of the record output', 
-    group: ObsRequestTypeGroup.RECORD 
-  },
-  { 
-    name: 'StartRecord', 
-    description: 'Starts the record output', 
-    group: ObsRequestTypeGroup.RECORD 
-  },
-  { 
-    name: 'StopRecord', 
-    description: 'Stops the record output', 
-    group: ObsRequestTypeGroup.RECORD 
-  },
-  {
-    name: 'ToggleRecordPause',
-    description: 'Toggles pause on the record output',
-    group: ObsRequestTypeGroup.RECORD,
-  },
-  { 
-    name: 'PauseRecord', 
-    description: 'Pauses the record output', 
-    group: ObsRequestTypeGroup.RECORD 
-  },
-  { 
-    name: 'ResumeRecord', 
-    description: 'Resumes the record output', 
-    group: ObsRequestTypeGroup.RECORD 
-  },
+  { name: 'GetRecordStatus', description: 'Gets the status of the record output', group: ObsRequestTypeGroup.RECORD, },
+  { name: 'ToggleRecord', description: 'Toggles the status of the record output', group: ObsRequestTypeGroup.RECORD },
+  { name: 'StartRecord', description: 'Starts the record output', group: ObsRequestTypeGroup.RECORD },
+  { name: 'StopRecord', description: 'Stops the record output', group: ObsRequestTypeGroup.RECORD },
+  { name: 'ToggleRecordPause', description: 'Toggles pause on the record output', group: ObsRequestTypeGroup.RECORD, },
+  { name: 'PauseRecord', description: 'Pauses the record output', group: ObsRequestTypeGroup.RECORD },
+  { name: 'ResumeRecord', description: 'Resumes the record output', group: ObsRequestTypeGroup.RECORD },
 
   {
     name: 'GetMediaInputStatus',
     description: 'Gets the status of a media input',
     group: ObsRequestTypeGroup.MEDIA,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the media input.', required: true },
+    ]
   },
   {
     name: 'SetMediaInputCursor',
     description: 'Sets the cursor position of a media input',
     group: ObsRequestTypeGroup.MEDIA,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the media input.', required: true },
+      { name: 'mediaCursor', type: ObsParamType.NUMBER, description: 'New cursor position to set.', required: true },
+      ]
   },
   {
     name: 'OffsetMediaInputCursor',
     description: 'Offsets the current cursor position of a media input by the specified value',
     group: ObsRequestTypeGroup.MEDIA,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the media input.', required: true },
+      { name: 'mediaCursorOffset', type: ObsParamType.NUMBER, description: 'Value to offset the current cursor position by.', required: true },
+      ]
   },
   {
     name: 'TriggerMediaInputAction',
     description: 'Triggers an action on a media input',
     group: ObsRequestTypeGroup.MEDIA,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the media input.', required: true },
+      { name: 'mediaAction', type: ObsParamType.STRING, description: 'Identifier of the `ObsMediaInputAction` enum.', required: true },
+      ]
   },
 
-  {
-    name: 'GetStudioModeEnabled',
-    description: 'Gets whether studio is enabled',
-    group: ObsRequestTypeGroup.UI,
-  },
+  { name: 'GetStudioModeEnabled', description: 'Gets whether studio is enabled', group: ObsRequestTypeGroup.UI, },
   {
     name: 'SetStudioModeEnabled',
     description: 'Enables or disables studio mode',
     group: ObsRequestTypeGroup.UI,
+    params: [
+      { name: 'studioModeEnabled', type: ObsParamType.BOOLEAN, description: 'true = enabled, false = disabled.', required: true },
+      ]
   },
   {
     name: 'OpenInputPropertiesDialog',
     description: 'Opens the properties dialog of an input',
     group: ObsRequestTypeGroup.UI,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to open the dialog of.', required: true },
+      ]
   },
   {
     name: 'OpenInputFiltersDialog',
     description: 'Opens the filters dialog of an input',
     group: ObsRequestTypeGroup.UI,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to open the dialog of.', required: true },
+      ]
   },
   {
     name: 'OpenInputInteractDialog',
     description: 'Opens the interact dialog of an input',
     group: ObsRequestTypeGroup.UI,
+    params: [
+      { name: 'inputName', type: ObsParamType.STRING, description: 'Name of the input to open the dialog of.', required: true },
+      ]
   },
-  { 
-    name: 'GetMonitorList', 
-    description: 'Gets a list of connected monitors and information about them', 
-    group: ObsRequestTypeGroup.UI 
-  },
+  { name: 'GetMonitorList', description: 'Gets a list of connected monitors and information about them', group: ObsRequestTypeGroup.UI },
   // { name: 'OpenVideoMixProjector', description: '', group: ObsRequestTypeGroup.UI },
   // { name: 'OpenSourceProjector', description: '', group: ObsRequestTypeGroup.UI },
 
