@@ -3,6 +3,7 @@ import {
 ObsParamType,
 obsParamTypeOptions,
 obsRequestTypeOptions,
+type ObsRequestParam,
 type ObsRequestTypeOption
 } from '@/common/obs.constants';
 import { useStorage } from '@vueuse/core';
@@ -12,6 +13,7 @@ type OBSRequestTypes
 } from 'obs-websocket-js';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import CodePreview from './CodePreview.vue';
+import ObsParamInput from './ObsParamInput.vue';
 
 type Schema = {
   requests?: (keyof OBSRequestTypes)[];
@@ -173,18 +175,27 @@ function getFormattedRequestInternal() {
   let resp: Record<string, any> = {};
 
   selectedParams.value[selectedRequest.value.name].forEach((param) => {
-    if (param.type === ObsParamType.NUMBER) {
-      resp[param.name] = Number(param.value);
-    } else if (param.type === ObsParamType.BOOLEAN) {
-      resp[param.name] = Boolean(param.value);
-    } else if (param.type === ObsParamType.OBJECT) {
-      resp[param.name] = Object(param.value);
-    } else {
-      resp[param.name] = param.value;
-    }
+    resp[param.name] = formatParam(param);
   });
 
   return resp;
+}
+
+function formatParam(param: ObsRequestParam & { value: any }) {
+  if (param.type === ObsParamType.NUMBER) {
+    return Number(param.value);
+  } else if (param.type === ObsParamType.BOOLEAN) {
+    return Boolean(param.value);
+  } else if (param.type === ObsParamType.OBJECT) {
+    if (param.params) {
+      const nestedResp: Record<string, any> = {};
+      param.params.forEach(nestedParam => nestedResp[nestedParam.name] = formatParam(nestedParam));
+      return nestedResp;
+    }
+    return Object(param.value);
+  } else {
+    return param.value;
+  }
 }
 </script>
 
@@ -314,53 +325,19 @@ function getFormattedRequestInternal() {
               class="d-flex flex-column"
               style="width: 50%;"
             >
-              <div v-for="objParam in param.params">
-                <v-select
-                  v-if="objParam.type === ObsParamType.BOOLEAN"
-                  v-model="objParam.value"
-                  :items="[
-                { value: true, title: 'True' },
-                { value: false, title: 'False' }
-              ]"
-                  :label="objParam.name"
-                  :placeholder="objParam.description"
-                  density="comfortable"
-                  hide-details
-                  class="mr-2 flex-grow-1"
-                />
-                <v-text-field
-                  v-else
-                  v-model="objParam.value"
-                  :label="objParam.name"
-                  :placeholder="objParam.description"
-                  density="comfortable"
-                  hide-details
-                  class="mr-2"
-                />
-              </div>
+              <ObsParamInput
+                v-for="objParam in param.params"
+                v-model:value="objParam.value"
+                :param="objParam"
+                :key="objParam.name"
+              />
             </div>
-            <v-select
-              v-else-if="param.type === ObsParamType.BOOLEAN"
-              v-model="param.value"
-              :items="[
-                { value: true, title: 'True' },
-                { value: false, title: 'False' }
-              ]"
-              label="Value"
-              :placeholder="param.description"
-              density="comfortable"
-              hide-details
-              class="mr-2 flex-grow-1"
-            />
-            <v-text-field
-              v-else
-              v-model="param.value"
-              label="Value"
-              :placeholder="param.description"
-              density="comfortable"
-              hide-details
-              class="mr-2"
-            />
+            <template v-else>
+              <ObsParamInput
+                v-model:value="param.value"
+                :param="param"
+              />
+            </template>
 
             <v-btn
               icon
