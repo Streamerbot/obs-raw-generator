@@ -175,6 +175,8 @@ function getFormattedRequestInternal() {
       resp[param.name] = Number(param.value);
     } else if (param.type === ObsParamType.BOOLEAN) {
       resp[param.name] = Boolean(param.value);
+    } else if (param.type === ObsParamType.OBJECT) {
+      resp[param.name] = Object(param.value);
     } else {
       resp[param.name] = param.value;
     }
@@ -300,6 +302,7 @@ function getFormattedRequestInternal() {
             <v-text-field
               v-model="param.value"
               label="Value"
+              :placeholder="param.description"
               density="comfortable"
               hide-details
             />
