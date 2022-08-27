@@ -189,9 +189,14 @@ function getFormattedRequestInternal() {
 <template>
   <v-container>
     <div>
-      <v-alert v-if="error" type="error" density="compact" class="mb-3">{{
+      <v-alert
+        v-if="error"
+        type="error"
+        density="compact"
+        class="mb-3"
+      >{{
         error
-      }}</v-alert>
+        }}</v-alert>
 
       <div style="grid-area: header">
         <h2>Config</h2>
@@ -226,8 +231,7 @@ function getFormattedRequestInternal() {
             variant="text"
             class="ml-2"
             @click="disconnect"
-            >Disconnect</v-btn
-          >
+          >Disconnect</v-btn>
           <v-btn
             v-else
             color="success"
@@ -235,8 +239,7 @@ function getFormattedRequestInternal() {
             class="ml-2"
             :loading="connecting"
             @click="connect"
-            >Connect</v-btn
-          >
+          >Connect</v-btn>
         </form>
       </div>
 
@@ -262,7 +265,7 @@ function getFormattedRequestInternal() {
               >
                 <span class="text-uppercase font-weight-bold">{{
                   item.raw.header
-                }}</span>
+                  }}</span>
               </v-list-subheader>
               <v-list-item
                 v-else
@@ -281,7 +284,7 @@ function getFormattedRequestInternal() {
 
           <div
             v-if="selectedRequest"
-            class="d-flex align-center"
+            class="d-flex align-center my-2"
             v-for="(param, index) in selectedParams[selectedRequest.name]"
           >
             <v-select
@@ -291,6 +294,8 @@ function getFormattedRequestInternal() {
               density="comfortable"
               hide-details
               :disabled="param.required"
+              class="mr-2"
+              style="max-width: 200px;"
             ></v-select>
             <v-text-field
               v-model="param.name"
@@ -298,14 +303,33 @@ function getFormattedRequestInternal() {
               density="comfortable"
               hide-details
               :disabled="param.required"
+              class="mr-2"
+              style="max-width: 350px;"
+            />
+
+            <v-select
+              v-if="param.type === ObsParamType.BOOLEAN"
+              v-model="param.value"
+              :items="[
+                { value: true, title: 'True' },
+                { value: false, title: 'False' }
+              ]"
+              label="Value"
+              :placeholder="param.description"
+              density="comfortable"
+              hide-details
+              class="mr-2 flex-grow-1"
             />
             <v-text-field
+              v-else
               v-model="param.value"
               label="Value"
               :placeholder="param.description"
               density="comfortable"
               hide-details
+              class="mr-2"
             />
+
             <v-btn
               icon
               variant="plain"
