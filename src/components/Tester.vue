@@ -53,10 +53,12 @@ const requestItems = computed<Array<ObsRequestTypeOption | { header: string }>>(
   }
 );
 const selectedRequest = ref<ObsRequestTypeOption>();
-const selectedParams = useStorage<Record<string, any[]>>(
-  'obs-store:params',
-  {}
-);
+// disable local storage for now
+// const selectedParams = useStorage<Record<string, any[]>>(
+//   'obs-store:params',
+//   {}
+// );
+const selectedParams = ref<Record<string, any[]>>({});
 const response = ref<any>({});
 
 onMounted(() => {
@@ -307,8 +309,38 @@ function getFormattedRequestInternal() {
               style="max-width: 350px;"
             />
 
+            <div
+              v-if="param.type === ObsParamType.OBJECT && param.params"
+              class="d-flex flex-column"
+              style="width: 50%;"
+            >
+              <div v-for="objParam in param.params">
+                <v-select
+                  v-if="objParam.type === ObsParamType.BOOLEAN"
+                  v-model="objParam.value"
+                  :items="[
+                { value: true, title: 'True' },
+                { value: false, title: 'False' }
+              ]"
+                  :label="objParam.name"
+                  :placeholder="objParam.description"
+                  density="comfortable"
+                  hide-details
+                  class="mr-2 flex-grow-1"
+                />
+                <v-text-field
+                  v-else
+                  v-model="objParam.value"
+                  :label="objParam.name"
+                  :placeholder="objParam.description"
+                  density="comfortable"
+                  hide-details
+                  class="mr-2"
+                />
+              </div>
+            </div>
             <v-select
-              v-if="param.type === ObsParamType.BOOLEAN"
+              v-else-if="param.type === ObsParamType.BOOLEAN"
               v-model="param.value"
               :items="[
                 { value: true, title: 'True' },

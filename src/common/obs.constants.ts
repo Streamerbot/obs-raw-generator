@@ -35,6 +35,7 @@ export type ObsRequestParam = {
   type: ObsParamType;
   description: string;
   required?: boolean;
+  params?: ObsRequestParam[];
 };
 
 export type ObsRequestTypeOption = {
@@ -128,30 +129,32 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.OBJECT,
         description: 'Object containing key modifiers to apply.',
         required: false,
-      },
-      {
-        name: 'keyModifiers.shift',
-        type: ObsParamType.BOOLEAN,
-        description: 'Press Shift',
-        required: false,
-      },
-      {
-        name: 'keyModifiers.control',
-        type: ObsParamType.BOOLEAN,
-        description: 'Press CTRL',
-        required: false,
-      },
-      {
-        name: 'keyModifiers.alt',
-        type: ObsParamType.BOOLEAN,
-        description: 'Press ALT',
-        required: false,
-      },
-      {
-        name: 'keyModifiers.command',
-        type: ObsParamType.BOOLEAN,
-        description: 'Press CMD (Mac OS Only)',
-        required: false,
+        params: [
+          {
+            name: 'shift',
+            type: ObsParamType.BOOLEAN,
+            description: 'Press Shift',
+            required: false,
+          },
+          {
+            name: 'control',
+            type: ObsParamType.BOOLEAN,
+            description: 'Press CTRL',
+            required: false,
+          },
+          {
+            name: 'alt',
+            type: ObsParamType.BOOLEAN,
+            description: 'Press ALT',
+            required: false,
+          },
+          {
+            name: 'command',
+            type: ObsParamType.BOOLEAN,
+            description: 'Press CMD (Mac OS Only)',
+            required: false,
+          },
+        ],
       },
     ],
   },
