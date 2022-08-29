@@ -273,7 +273,8 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
     <v-row>
       <v-col
         cols="12"
-        lg="4"
+        sm="4"
+        xl="3"
       >
         <RequestMenu
           v-model:value="selectedRequest"
@@ -282,7 +283,8 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
       </v-col>
       <v-col
         cols="12"
-        lg="8"
+        sm="8"
+        xl="9"
       >
 
         <div>
