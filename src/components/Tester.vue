@@ -13,6 +13,7 @@ type OBSRequestTypes
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import CodePreview from './CodePreview.vue';
 import ObsParamInput from './ObsParamInput.vue';
+import RequestMenu from './RequestMenu.vue';
 
 type Schema = {
   requests?: (keyof OBSRequestTypes)[];
@@ -31,29 +32,7 @@ const error = ref<string | null>();
 const isConnected = ref<boolean>(false);
 const obsInfo = ref<any>();
 
-// add group headers for request autocomplete
-const requestItems = computed<Array<ObsRequestTypeOption | { header: string; }>>(
-  () => {
-    const items = [];
-    let prevGroup = null;
-    for (const requestType of obsRequestTypeOptions) {
-      if (prevGroup && prevGroup === requestType.group) {
-        items.push({
-          ...requestType,
-        });
-      } else {
-        prevGroup = requestType.group;
-        items.push({
-          header: `${requestType.group}`,
-        });
-        items.push({
-          ...requestType,
-        });
-      }
-    }
-    return items;
-  }
-);
+
 const selectedRequest = ref<ObsRequestTypeOption>();
 // disable local storage for now
 // const selectedParams = useStorage<Record<string, any[]>>(
@@ -227,59 +206,64 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
 <template>
   <v-toolbar
     density="compact"
-    color="#222"
+    color="#1d1d1d"
   >
-    <v-toolbar-title>Streamer.bot OBS Raw Generator</v-toolbar-title>
+    <span class="d-flex flex-column mx-5">
+      <span>OBS Raw Generator</span>
+      <small class="text-grey">for Streamer.bot</small>
+    </span>
     <v-spacer />
     <v-toolbar-items>
-      <v-text-field
-        v-model="host"
-        type="text"
-        label="Host"
-        density="compact"
-        variant="filled"
-        class="mr-2"
-        hide-details
-        :disabled="isConnected"
-        style="min-width: 150px;"
-      />
-      <v-text-field
-        v-model.number="port"
-        type="number"
-        label="Port"
-        density="compact"
-        variant="filled"
-        class="mr-2"
-        hide-details
-        :disabled="isConnected"
-        style="min-width: 75px;"
-      />
-      <v-text-field
-        v-model="password"
-        type="password"
-        label="Password"
-        density="compact"
-        variant="filled"
-        class="mr-2"
-        hide-details
-        :disabled="isConnected"
-        style="min-width: 150px;"
-      />
-      <v-btn
-        v-if="isConnected"
-        color="error"
-        variant="text"
-        class="ml-2"
-        @click="disconnect"
-      >Disconnect</v-btn>
-      <v-btn
-        v-else
-        color="success"
-        variant="text"
-        class="ml-2"
-        :loading="connecting"
-        @click="connect"
-      >Connect</v-btn>
+      <span class="d-flex align-center mx-5">
+        <v-text-field
+          v-model="host"
+          type="text"
+          label="Host"
+          density="compact"
+          variant="filled"
+          class="mr-2 my-1"
+          hide-details
+          :disabled="isConnected"
+          style="min-width: 150px;"
+        />
+        <v-text-field
+          v-model.number="port"
+          type="number"
+          label="Port"
+          density="compact"
+          variant="filled"
+          class="mr-2 my-1"
+          hide-details
+          :disabled="isConnected"
+          style="min-width: 75px;"
+        />
+        <v-text-field
+          v-model="password"
+          type="password"
+          label="Password"
+          density="compact"
+          variant="filled"
+          class="mr-2 my-1"
+          hide-details
+          :disabled="isConnected"
+          style="min-width: 150px;"
+        />
+        <v-btn
+          v-if="isConnected"
+          color="pink"
+          variant="outlined"
+          class="ml-2"
+          @click="disconnect"
+        >Disconnect <v-icon class="ml-2">mdi-close-circle</v-icon></v-btn>
+        <v-btn
+          v-else
+          color="success"
+          variant="outlined"
+          class="ml-2"
+          :loading="connecting"
+          @click="connect"
+        >Connect <v-icon class="ml-2">mdi-chevron-right-circle</v-icon></v-btn>
+      </span>
     </v-toolbar-items>
   </v-toolbar>
 
@@ -289,30 +273,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
         cols="12"
         lg="4"
       >
-        <v-list class="request-list overflow-y-auto py-0">
-          <template v-for="item in requestItems">
-            <v-list-subheader
-              v-if="item.header"
-              :key="item.header"
-              class="bg-grey-darken-3"
-            >
-              <span class="text-primary text-uppercase font-weight-bold">{{
-                item.header
-                }}</span>
-            </v-list-subheader>
-            <v-list-item
-              v-else
-              :key="item.name"
-              :active="selectedRequest && selectedRequest.name === item.name"
-              :disabled="obsInfo && selectedRequest && !obsInfo.availableRequests.includes(selectedRequest.name)"
-              color="primary"
-              @click="selectedRequest = item"
-            >
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
-              <v-list-item-subtitle>{{ item.description }}</v-list-item-subtitle>
-            </v-list-item>
-          </template>
-        </v-list>
+        <RequestMenu v-model:value="selectedRequest" :obs-info="obsInfo"></RequestMenu>
       </v-col>
       <v-col
         cols="12"
