@@ -30,8 +30,8 @@ function copyText() {
 </script>
 
 <template>
-  <div class="bg-grey-darken-4 position-relative">
-    <pre class="pa-3 overflow-y-auto" style="min-height: 100px; max-height: 500px;"><code class="language-javascript">{{ value || '{}' }}</code></pre>
+  <div class="position-relative">
+    <pre class="pa-3 overflow-y-auto rounded-lg bg-grey-darken-4" style="min-height: 4rem; max-height: 500px;"><code class="language-javascript">{{ value || '{}' }}</code></pre>
     <span class="position-absolute" style="top: 1rem; right: 1.5rem">
       <v-tooltip location="top">
         <template v-slot:activator="{ props }">

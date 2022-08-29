@@ -363,12 +363,12 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                     :key="objParam.name"
                   />
                 </div>
-                <template v-else>
+                <div v-else style="width: 50%;">
                   <ObsParamInput
                     v-model:value="param.value"
                     :param="param"
                   />
-                </template>
+                </div>
 
                 <v-btn
                   icon
