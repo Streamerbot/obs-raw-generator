@@ -286,42 +286,46 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
       >
 
         <div>
-          <v-alert
-            v-if="error"
-            type="error"
-            density="compact"
-            class="my-3"
-          >
-            {{ error }}
-          </v-alert>
+          <v-slide-y-transition>
+            <v-alert
+              v-if="error"
+              type="error"
+              density="compact"
+              class="my-3"
+            >
+              {{ error }}
+            </v-alert>
+          </v-slide-y-transition>
 
-          <v-sheet
-            class="rounded-lg pa-3 text-grey d-flex align-center"
-            v-if="obsInfo"
-          >
-            <span class="mr-5 text-success d-flex align-center">
-              <v-icon
-                size="small"
-                color="success"
-              >mdi-check-circle</v-icon>
-              <span class="ml-1">Connected</span>
-            </span>
-            <small>
-              OBS Studio {{ obsInfo.obsVersion }}
-            </small>
-            <span class="mx-2"></span>
-            <small>
-              OBS WebSocket {{ obsInfo.obsWebSocketVersion }}
-            </small>
-            <span class="mx-2"></span>
-            <small>
-              RPC v{{ obsInfo.rpcVersion }}
-            </small>
-            <span class="mx-2"></span>
-            <small>
-              {{ obsInfo.platformDescription }}
-            </small>
-          </v-sheet>
+          <v-slide-y-transition>
+            <v-sheet
+              class="rounded-lg pa-3 text-grey d-flex align-center"
+              v-if="obsInfo"
+            >
+              <span class="mr-5 text-success d-flex align-center">
+                <v-icon
+                  size="small"
+                  color="success"
+                >mdi-check-circle</v-icon>
+                <span class="ml-1">Connected</span>
+              </span>
+              <small>
+                OBS Studio {{ obsInfo.obsVersion }}
+              </small>
+              <span class="mx-2"></span>
+              <small>
+                OBS WebSocket {{ obsInfo.obsWebSocketVersion }}
+              </small>
+              <span class="mx-2"></span>
+              <small>
+                RPC v{{ obsInfo.rpcVersion }}
+              </small>
+              <span class="mx-2"></span>
+              <small>
+                {{ obsInfo.platformDescription }}
+              </small>
+            </v-sheet>
+          </v-slide-y-transition>
 
           <div class="mt-5">
             <h2>Request</h2>
@@ -331,71 +335,73 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                 :value="formattedRequest"
               ></code-preview>
 
-              <v-sheet
-                v-if="selectedRequest"
-                v-for="(param, index) in selectedParams[selectedRequest.name]"
-                :key="index"
-                class="rounded-lg my-3 pa-2"
-              >
-                <div class="d-flex justify-space-between">
-                  <span class="px-2 pt-2 text-grey">
-                    Param {{ index + 1 }}
-                  </span>
-                  <v-btn
-                    icon
-                    variant="plain"
-                    size="small"
-                    class="ml-2"
-                    color="error"
-                    :disabled="param.required"
-                    @click="removeParam(index)"
-                  >
-                    <v-icon size="small">mdi-close-circle</v-icon>
-                  </v-btn>
-                </div>
-                <div class="d-flex align-center">
-                  <v-select
-                    v-model="param.type"
-                    :items="obsParamTypeOptions"
-                    label="Type"
-                    density="compact"
-                    :disabled="param.required"
-                    class="mr-2 align-self-start"
-                    style="max-width: 200px;"
-                  ></v-select>
-
-                  <v-text-field
-                    v-model="param.name"
-                    label="Name"
-                    density="compact"
-                    :disabled="param.required"
-                    class="mr-2 align-self-start"
-                    style="max-width: 350px;"
-                  />
-
-                  <div
-                    v-if="param.type === ObsParamType.OBJECT && param.params"
-                    class="d-flex flex-column"
-                    style="width: 50%;"
-                  >
-                    <ObsParamInput
-                      v-for="objParam in param.params"
-                      v-model:value="objParam.value"
-                      :param="objParam"
-                      :key="objParam.name"
-                    />
+              <v-slide-y-transition group>
+                <v-sheet
+                  v-if="selectedRequest"
+                  v-for="(param, index) in selectedParams[selectedRequest.name]"
+                  :key="index"
+                  class="rounded-lg my-3 pa-2"
+                >
+                  <div class="d-flex justify-space-between">
+                    <span class="px-2 pt-2 text-grey">
+                      Param {{ index + 1 }}
+                    </span>
+                    <v-btn
+                      icon
+                      variant="plain"
+                      size="small"
+                      class="ml-2"
+                      color="error"
+                      :disabled="param.required"
+                      @click="removeParam(index)"
+                    >
+                      <v-icon size="small">mdi-close-circle</v-icon>
+                    </v-btn>
                   </div>
-                  <div
-                    v-else
-                    style="width: 50%;"
-                  >
-                    <ObsParamInput
-                      v-model:value="param.value"
-                      :param="param"
+                  <div class="d-flex align-center">
+                    <v-select
+                      v-model="param.type"
+                      :items="obsParamTypeOptions"
+                      label="Type"
+                      density="compact"
+                      :disabled="param.required"
+                      class="mr-2 align-self-start"
+                      style="max-width: 200px;"
+                    ></v-select>
+
+                    <v-text-field
+                      v-model="param.name"
+                      label="Name"
+                      density="compact"
+                      :disabled="param.required"
+                      class="mr-2 align-self-start"
+                      style="max-width: 350px;"
                     />
+
+                    <div
+                      v-if="param.type === ObsParamType.OBJECT && param.params"
+                      class="d-flex flex-column"
+                      style="width: 50%;"
+                    >
+                      <ObsParamInput
+                        v-for="objParam in param.params"
+                        v-model:value="objParam.value"
+                        :param="objParam"
+                        :key="objParam.name"
+                      />
+                    </div>
+                    <div
+                      v-else
+                      style="width: 50%;"
+                    >
+                      <ObsParamInput
+                        v-model:value="param.value"
+                        :param="param"
+                      />
+                    </div>
                   </div>
-                </div>
-              </v-sheet>
+                </v-sheet>
+              </v-slide-y-transition>
             </form>
 
             <div class="d-flex align-center">
