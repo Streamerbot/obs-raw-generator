@@ -254,7 +254,8 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
           variant="outlined"
           class="ml-2"
           @click="disconnect"
-        >Disconnect <v-icon class="ml-2">mdi-close-circle</v-icon></v-btn>
+        >Disconnect <v-icon class="ml-2">mdi-close-circle</v-icon>
+        </v-btn>
         <v-btn
           v-else
           color="success"
@@ -262,7 +263,8 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
           class="ml-2"
           :loading="connecting"
           @click="connect"
-        >Connect <v-icon class="ml-2">mdi-chevron-right-circle</v-icon></v-btn>
+        >Connect <v-icon class="ml-2">mdi-chevron-right-circle</v-icon>
+        </v-btn>
       </span>
     </v-toolbar-items>
   </v-toolbar>
@@ -273,7 +275,10 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
         cols="12"
         lg="4"
       >
-        <RequestMenu v-model:value="selectedRequest" :obs-info="obsInfo"></RequestMenu>
+        <RequestMenu
+          v-model:value="selectedRequest"
+          :obs-info="obsInfo"
+        ></RequestMenu>
       </v-col>
       <v-col
         cols="12"
@@ -326,61 +331,71 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                 :value="formattedRequest"
               ></code-preview>
 
-              <div
+              <v-sheet
                 v-if="selectedRequest"
-                class="d-flex align-center my-2"
                 v-for="(param, index) in selectedParams[selectedRequest.name]"
+                :key="index"
+                class="rounded-lg my-3 pa-2"
               >
-                <v-select
-                  v-model="param.type"
-                  :items="obsParamTypeOptions"
-                  label="Type"
-                  density="comfortable"
-                  hide-details
-                  :disabled="param.required"
-                  class="mr-2"
-                  style="max-width: 200px;"
-                ></v-select>
-                <v-text-field
-                  v-model="param.name"
-                  label="Name"
-                  density="comfortable"
-                  hide-details
-                  :disabled="param.required"
-                  class="mr-2"
-                  style="max-width: 350px;"
-                />
-
-                <div
-                  v-if="param.type === ObsParamType.OBJECT && param.params"
-                  class="d-flex flex-column"
-                  style="width: 50%;"
-                >
-                  <ObsParamInput
-                    v-for="objParam in param.params"
-                    v-model:value="objParam.value"
-                    :param="objParam"
-                    :key="objParam.name"
-                  />
+                <div class="d-flex justify-space-between">
+                  <span class="px-2 pt-2 text-grey">
+                    Param {{ index + 1 }}
+                  </span>
+                  <v-btn
+                    icon
+                    variant="plain"
+                    size="small"
+                    class="ml-2"
+                    color="error"
+                    :disabled="param.required"
+                    @click="removeParam(index)"
+                  >
+                    <v-icon size="small">mdi-close-circle</v-icon>
+                  </v-btn>
                 </div>
-                <div v-else style="width: 50%;">
-                  <ObsParamInput
-                    v-model:value="param.value"
-                    :param="param"
-                  />
-                </div>
+                <div class="d-flex align-center">
+                  <v-select
+                    v-model="param.type"
+                    :items="obsParamTypeOptions"
+                    label="Type"
+                    density="compact"
+                    :disabled="param.required"
+                    class="mr-2 align-self-start"
+                    style="max-width: 200px;"
+                  ></v-select>
 
-                <v-btn
-                  icon
-                  variant="plain"
-                  size="small"
-                  class="ml-2"
-                  :disabled="param.required"
-                  @click="removeParam(index)"
-                >
-                  <v-icon size="small">mdi-close-circle</v-icon>
-                </v-btn>
-              </div>
+                  <v-text-field
+                    v-model="param.name"
+                    label="Name"
+                    density="compact"
+                    :disabled="param.required"
+                    class="mr-2 align-self-start"
+                    style="max-width: 350px;"
+                  />
+
+                  <div
+                    v-if="param.type === ObsParamType.OBJECT && param.params"
+                    class="d-flex flex-column"
+                    style="width: 50%;"
+                  >
+                    <ObsParamInput
+                      v-for="objParam in param.params"
+                      v-model:value="objParam.value"
+                      :param="objParam"
+                      :key="objParam.name"
+                    />
+                  </div>
+                  <div
+                    v-else
+                    style="width: 50%;"
+                  >
+                    <ObsParamInput
+                      v-model:value="param.value"
+                      :param="param"
+                    />
+                  </div>
+                </div>
+              </v-sheet>
             </form>
 
             <div class="d-flex align-center">

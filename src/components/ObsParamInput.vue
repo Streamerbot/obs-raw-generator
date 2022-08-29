@@ -18,19 +18,19 @@ const value = useVModel(props, 'value');
       { value: true, title: 'True' },
       { value: false, title: 'False' }
     ]"
-    :label="param.name"
-    :placeholder="param.description"
-    density="comfortable"
-    hide-details
-    class="mr-2 flex-grow-1"
+    label="Value"
+    density="compact"
+    :hint="param.description"
+    persistent-hint
+    class="mr-2 mb-2"
   />
   <v-text-field
     v-else
     v-model="value"
-    :label="param.name"
-    :placeholder="param.description"
-    density="comfortable"
-    hide-details
-    class="mr-2"
+    label="Value"
+    density="compact"
+    :hint="param.description"
+    persistent-hint
+    class="mr-2 mb-2"
   />
 </template>
