@@ -10,7 +10,7 @@ import OBSWebSocket, {
 type OBSEventTypes,
 type OBSRequestTypes
 } from 'obs-websocket-js';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import CodePreview from './CodePreview.vue';
 import ObsParamInput from './ObsParamInput.vue';
 
@@ -29,6 +29,7 @@ const password = ref<string>('');
 const connecting = ref<boolean>(false);
 const error = ref<string | null>();
 const isConnected = ref<boolean>(false);
+const obsInfo = ref<any>();
 
 // add group headers for request autocomplete
 const requestItems = computed<Array<ObsRequestTypeOption | { header: string; }>>(
@@ -69,6 +70,19 @@ onMounted(() => {
 
 onUnmounted(() => {
   disconnect();
+});
+
+watch(isConnected, async (val) => {
+  if (!val) return obsInfo.value = null;
+
+  // auto select first item on connect
+  selectedRequest.value = obsRequestTypeOptions.find(item => !!item.name);
+
+  // fetch obs version info on connect
+  nextTick(async () => {
+    obsInfo.value = await sendRequest('GetVersion');
+    console.log(obsInfo.value);
+  });
 });
 
 const formatStyle = ref<RequestFormatType>(RequestFormatType.STREAMERBOT_RAW);
@@ -122,6 +136,7 @@ async function connect() {
   try {
     if (isConnected.value) await obs.disconnect();
     await obs.connect(url.value, password.value);
+    isConnected.value = true;
   } catch (e: Error) {
     error.value = e.message || 'Connection error';
   } finally {
@@ -142,17 +157,17 @@ async function disconnect() {
 function initEventListeners() {
   obs.on('ConnectionClosed', () => (isConnected.value = false));
   obs.on('ConnectionError', () => (isConnected.value = false));
-  obs.on('ConnectionOpened', () => (isConnected.value = true));
 }
 
-async function sendRequest() {
+async function sendRequest(name: keyof OBSRequestTypes, data: Record<string, any> = {}) {
+  return await obs.call(name, data);
+}
+
+async function sendSelectedRequest() {
   if (!selectedRequest.value) return;
 
   try {
-    response.value = await obs.call(
-      selectedRequest.value.name,
-      getFormattedRequestInternal()
-    );
+    response.value = await sendRequest(selectedRequest.value.name, getFormattedRequestInternal());
   } catch (e) {
     response.value = e;
   }
@@ -267,138 +282,179 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
       >Connect</v-btn>
     </v-toolbar-items>
   </v-toolbar>
-  <v-container>
-    <div>
-      <v-alert
-        v-if="error"
-        type="error"
-        density="compact"
-        class="mb-3"
+
+  <v-container fluid>
+    <v-row>
+      <v-col
+        cols="12"
+        lg="4"
       >
-        {{ error }}
-      </v-alert>
-
-      <div class="mt-5">
-        <h2>Request</h2>
-        <form style="display: relative">
-          <v-autocomplete
-            v-model="selectedRequest"
-            :items="requestItems"
-            label="Request Type"
-            density="comfortable"
-            item-title="name"
-            item-value="name"
-            return-object
-            menu-icon="mdi-chevron-down"
-            clearable
-          >
-            <template #item="{ props, item }">
-              <v-list-subheader
-                v-if="item.raw.header"
-                :key="props.key"
-                class="bg-grey-darken-3"
-              >
-                <span class="text-uppercase font-weight-bold">{{
-                  item.raw.header
-                  }}</span>
-              </v-list-subheader>
-              <v-list-item
-                v-else
-                v-bind="props"
-                :title="item.raw.name"
-                :subtitle="item.raw.description"
-                density="compact"
-              ></v-list-item>
-            </template>
-          </v-autocomplete>
-
-          <code-preview
-            v-if="selectedRequest"
-            :value="formattedRequest"
-          ></code-preview>
-
-          <div
-            v-if="selectedRequest"
-            class="d-flex align-center my-2"
-            v-for="(param, index) in selectedParams[selectedRequest.name]"
-          >
-            <v-select
-              v-model="param.type"
-              :items="obsParamTypeOptions"
-              label="Type"
-              density="comfortable"
-              hide-details
-              :disabled="param.required"
-              class="mr-2"
-              style="max-width: 200px;"
-            ></v-select>
-            <v-text-field
-              v-model="param.name"
-              label="Name"
-              density="comfortable"
-              hide-details
-              :disabled="param.required"
-              class="mr-2"
-              style="max-width: 350px;"
-            />
-
-            <div
-              v-if="param.type === ObsParamType.OBJECT && param.params"
-              class="d-flex flex-column"
-              style="width: 50%;"
+        <v-list class="request-list overflow-y-auto py-0">
+          <template v-for="item in requestItems">
+            <v-list-subheader
+              v-if="item.header"
+              :key="item.header"
+              class="bg-grey-darken-3"
             >
-              <ObsParamInput
-                v-for="objParam in param.params"
-                v-model:value="objParam.value"
-                :param="objParam"
-                :key="objParam.name"
-              />
-            </div>
-            <template v-else>
-              <ObsParamInput
-                v-model:value="param.value"
-                :param="param"
-              />
-            </template>
-
-            <v-btn
-              icon
-              variant="plain"
-              size="small"
-              class="ml-2"
-              :disabled="param.required"
-              @click="removeParam(index)"
+              <span class="text-primary text-uppercase font-weight-bold">{{
+                item.header
+                }}</span>
+            </v-list-subheader>
+            <v-list-item
+              v-else
+              :key="item.name"
+              :active="selectedRequest && selectedRequest.name === item.name"
+              :disabled="obsInfo && selectedRequest && !obsInfo.availableRequests.includes(selectedRequest.name)"
+              color="primary"
+              @click="selectedRequest = item"
             >
-              <v-icon size="small">mdi-close-circle</v-icon>
-            </v-btn>
-          </div>
-        </form>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-subtitle>{{ item.description }}</v-list-item-subtitle>
+            </v-list-item>
+          </template>
+        </v-list>
+      </v-col>
+      <v-col
+        cols="12"
+        lg="8"
+      >
 
-        <div class="d-flex align-center">
-          <v-btn
-            v-if="selectedRequest"
-            @click="addParam()"
-            type="button"
-            class="my-2 mr-2"
-            :disabled="!selectedRequest"
-          >
-            Add Param
-          </v-btn>
-          <v-btn
+        <div>
+          <v-alert
+            v-if="error"
+            type="error"
+            density="compact"
             class="my-3"
-            color="success"
-            :disabled="!isConnected || !selectedRequest"
-            @click="sendRequest"
           >
-            Send Request
-          </v-btn>
-        </div>
-      </div>
+            {{ error }}
+          </v-alert>
 
-      <div class="my-3">
-        <h2>Response</h2>
-        <code-preview :value="response"></code-preview>
-      </div>
-    </div>
+          <v-sheet
+            class="rounded-lg pa-3 text-grey d-flex align-center"
+            v-if="obsInfo"
+          >
+            <span class="mr-5 text-success d-flex align-center">
+              <v-icon
+                size="small"
+                color="success"
+              >mdi-check-circle</v-icon>
+              <span class="ml-1">Connected</span>
+            </span>
+            <small>
+              OBS Studio {{ obsInfo.obsVersion }}
+            </small>
+            <span class="mx-2"></span>
+            <small>
+              OBS WebSocket {{ obsInfo.obsWebSocketVersion }}
+            </small>
+            <span class="mx-2"></span>
+            <small>
+              RPC v{{ obsInfo.rpcVersion }}
+            </small>
+            <span class="mx-2"></span>
+            <small>
+              {{ obsInfo.platformDescription }}
+            </small>
+          </v-sheet>
+
+          <div class="mt-5">
+            <h2>Request</h2>
+            <form>
+              <code-preview
+                v-if="selectedRequest"
+                :value="formattedRequest"
+              ></code-preview>
+
+              <div
+                v-if="selectedRequest"
+                class="d-flex align-center my-2"
+                v-for="(param, index) in selectedParams[selectedRequest.name]"
+              >
+                <v-select
+                  v-model="param.type"
+                  :items="obsParamTypeOptions"
+                  label="Type"
+                  density="comfortable"
+                  hide-details
+                  :disabled="param.required"
+                  class="mr-2"
+                  style="max-width: 200px;"
+                ></v-select>
+                <v-text-field
+                  v-model="param.name"
+                  label="Name"
+                  density="comfortable"
+                  hide-details
+                  :disabled="param.required"
+                  class="mr-2"
+                  style="max-width: 350px;"
+                />
+
+                <div
+                  v-if="param.type === ObsParamType.OBJECT && param.params"
+                  class="d-flex flex-column"
+                  style="width: 50%;"
+                >
+                  <ObsParamInput
+                    v-for="objParam in param.params"
+                    v-model:value="objParam.value"
+                    :param="objParam"
+                    :key="objParam.name"
+                  />
+                </div>
+                <template v-else>
+                  <ObsParamInput
+                    v-model:value="param.value"
+                    :param="param"
+                  />
+                </template>
+
+                <v-btn
+                  icon
+                  variant="plain"
+                  size="small"
+                  class="ml-2"
+                  :disabled="param.required"
+                  @click="removeParam(index)"
+                >
+                  <v-icon size="small">mdi-close-circle</v-icon>
+                </v-btn>
+              </div>
+            </form>
+
+            <div class="d-flex align-center">
+              <v-btn
+                v-if="selectedRequest"
+                @click="addParam()"
+                type="button"
+                class="my-2 mr-2"
+                :disabled="!selectedRequest"
+              >
+                Add Param
+              </v-btn>
+              <v-btn
+                class="my-3"
+                color="success"
+                :disabled="!isConnected || !selectedRequest"
+                @click="sendSelectedRequest"
+              >
+                Send Request
+              </v-btn>
+            </div>
+          </div>
+
+          <div class="my-3">
+            <h2>Response</h2>
+            <code-preview :value="response"></code-preview>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
+
+<style scoped>
+.request-list {
+  max-height: calc(100vh - 85px);
+}
+</style>
