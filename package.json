@@ -11,9 +11,10 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@mdi/font": "^5.9.55",
+    "@mdi/font": "^7.0.96",
     "@vueuse/core": "^9.1.0",
     "obs-websocket-js": "^5.0.1",
+    "prismjs": "^1.29.0",
     "roboto-fontface": "*",
     "vue": "^3.2.37",
     "vuetify": "^3.0.0-beta.0",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.7.8",
+    "@types/prismjs": "^1.26.0",
     "@types/webfontloader": "^1.0.0",
     "@vitejs/plugin-vue": "^3.0.3",
     "@vue/tsconfig": "^0.1.3",

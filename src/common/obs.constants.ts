@@ -1,5 +1,10 @@
 import type { OBSRequestTypes } from 'obs-websocket-js';
 
+export enum RequestFormatType {
+  STREAMERBOT_RAW = 'streamerbot_raw',
+  OBS = 'obs'
+}
+
 export enum ObsParamType {
   STRING = 'String',
   NUMBER = 'Number',

@@ -1,11 +1,21 @@
 <script lang="ts" setup>
 import { useClipboard } from '@vueuse/core';
-import { computed } from 'vue';
+import Prism from "prismjs";
+import 'prismjs/themes/prism-tomorrow.css';
+import { computed, nextTick, onMounted, watch } from 'vue';
 
 type Props = {
-  value: string | object;
+  value?: string | object | undefined;
 };
 const props = defineProps<Props>();
+
+onMounted(() => refreshPrism);
+watch(() => props.value, refreshPrism);
+
+function refreshPrism() {
+  nextTick(() => Prism.highlightAll());
+}
+
 
 const text = computed(() => {
   if (typeof props.value === 'string') return props.value;
@@ -20,9 +30,9 @@ function copyText() {
 </script>
 
 <template>
-  <div class="bg-grey-darken-4 my-3 pa-3 position-relative" style="min-height: 3rem;">
-    <pre><code>{{ value }}</code></pre>
-    <span class="position-absolute" style="top: 0.5rem; right: 0.5rem">
+  <div class="bg-grey-darken-4 position-relative">
+    <pre class="pa-3 overflow-y-auto" style="min-height: 100px; max-height: 500px;"><code class="language-javascript">{{ value || '{}' }}</code></pre>
+    <span class="position-absolute" style="top: 1rem; right: 1.5rem">
       <v-tooltip location="top">
         <template v-slot:activator="{ props }">
           <span v-bind="props">

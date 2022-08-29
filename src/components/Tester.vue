@@ -2,8 +2,7 @@
 import {
 ObsParamType,
 obsParamTypeOptions,
-obsRequestTypeOptions,
-type ObsRequestParam,
+obsRequestTypeOptions, RequestFormatType, type ObsRequestParam,
 type ObsRequestTypeOption
 } from '@/common/obs.constants';
 import { useStorage } from '@vueuse/core';
@@ -32,7 +31,7 @@ const error = ref<string | null>();
 const isConnected = ref<boolean>(false);
 
 // add group headers for request autocomplete
-const requestItems = computed<Array<ObsRequestTypeOption | { header: string }>>(
+const requestItems = computed<Array<ObsRequestTypeOption | { header: string; }>>(
   () => {
     const items = [];
     let prevGroup = null;
@@ -72,13 +71,24 @@ onUnmounted(() => {
   disconnect();
 });
 
+const formatStyle = ref<RequestFormatType>(RequestFormatType.STREAMERBOT_RAW);
 const formattedRequest = computed(() => {
-  let resp = getFormattedRequestInternal() || {};
+  const data = getFormattedRequestInternal() || {};
 
-  resp['request-type'] = selectedRequest.value?.name;
-  resp['message-id'] = '123';
+  switch(formatStyle.value) {
+    case RequestFormatType.OBS:
+      return {
+        'request-type': selectedRequest.value?.name,
+        ...data
+      };
 
-  return resp;
+    case RequestFormatType.STREAMERBOT_RAW:
+    default:
+      return {
+        'requestType': selectedRequest.value?.name,
+        'requestData': data
+      };
+  }
 });
 
 watch(selectedRequest, (val, prev) => {
@@ -181,7 +191,7 @@ function getFormattedRequestInternal() {
   return resp;
 }
 
-function formatParam(param: ObsRequestParam & { value: any }) {
+function formatParam(param: ObsRequestParam & { value: any; }) {
   if (param.type === ObsParamType.NUMBER) {
     return Number(param.value);
   } else if (param.type === ObsParamType.BOOLEAN) {
@@ -200,6 +210,63 @@ function formatParam(param: ObsRequestParam & { value: any }) {
 </script>
 
 <template>
+  <v-toolbar
+    density="compact"
+    color="#222"
+  >
+    <v-toolbar-title>Streamer.bot OBS Raw Generator</v-toolbar-title>
+    <v-spacer />
+    <v-toolbar-items>
+      <v-text-field
+        v-model="host"
+        type="text"
+        label="Host"
+        density="compact"
+        variant="filled"
+        class="mr-2"
+        hide-details
+        :disabled="isConnected"
+        style="min-width: 150px;"
+      />
+      <v-text-field
+        v-model.number="port"
+        type="number"
+        label="Port"
+        density="compact"
+        variant="filled"
+        class="mr-2"
+        hide-details
+        :disabled="isConnected"
+        style="min-width: 75px;"
+      />
+      <v-text-field
+        v-model="password"
+        type="password"
+        label="Password"
+        density="compact"
+        variant="filled"
+        class="mr-2"
+        hide-details
+        :disabled="isConnected"
+        style="min-width: 150px;"
+      />
+      <v-btn
+        v-if="isConnected"
+        color="error"
+        variant="text"
+        class="ml-2"
+        @click="disconnect"
+      >Disconnect</v-btn>
+      <v-btn
+        v-else
+        color="success"
+        variant="text"
+        class="ml-2"
+        :loading="connecting"
+        @click="connect"
+      >Connect</v-btn>
+    </v-toolbar-items>
+  </v-toolbar>
   <v-container>
     <div>
       <v-alert
@@ -207,54 +274,9 @@ function formatParam(param: ObsRequestParam & { value: any }) {
         type="error"
         density="compact"
         class="mb-3"
-      >{{
-        error
-        }}</v-alert>
-
-      <div style="grid-area: header">
-        <h2>Config</h2>
-        <form class="d-flex align-center">
-          <v-text-field
-            v-model="host"
-            type="text"
-            label="Host"
-            density="comfortable"
-            hide-details
-            :disabled="isConnected"
-          />
-          <v-text-field
-            v-model.number="port"
-            type="number"
-            label="Port"
-            density="comfortable"
-            hide-details
-            :disabled="isConnected"
-          />
-          <v-text-field
-            v-model="password"
-            type="password"
-            label="Password"
-            density="comfortable"
-            hide-details
-            :disabled="isConnected"
-          />
-          <v-btn
-            v-if="isConnected"
-            color="error"
-            variant="text"
-            class="ml-2"
-            @click="disconnect"
-          >Disconnect</v-btn>
-          <v-btn
-            v-else
-            color="success"
-            variant="text"
-            class="ml-2"
-            :loading="connecting"
-            @click="connect"
-          >Connect</v-btn>
-        </form>
-      </div>
+      >
+        {{ error }}
+      </v-alert>
 
       <div class="mt-5">
         <h2>Request</h2>
@@ -357,7 +379,7 @@ function formatParam(param: ObsRequestParam & { value: any }) {
             v-if="selectedRequest"
             @click="addParam()"
             type="button"
-            class="my-2"
+            class="my-2 mr-2"
             :disabled="!selectedRequest"
           >
             Add Param
