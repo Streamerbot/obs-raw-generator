@@ -5,7 +5,7 @@ obsParamTypeOptions,
 obsRequestTypeOptions, RequestFormatType, type ObsRequestParam,
 type ObsRequestTypeOption
 } from '@/common/obs.constants';
-import { useStorage } from '@vueuse/core';
+import { useClipboard, useStorage } from '@vueuse/core';
 import OBSWebSocket, {
 type OBSEventTypes,
 type OBSRequestTypes
@@ -83,6 +83,14 @@ const formattedRequest = computed(() => {
       };
   }
 });
+
+const { copy, isSupported: clipboardSupported } = useClipboard();
+function copyObsRaw() {
+  copy(JSON.stringify({
+    'requestType': selectedRequest.value?.name,
+    'requestData': getFormattedRequestInternal() ?? {}
+  }));
+}
 
 watch(selectedRequest, (val, prev) => {
   if (!val) return;
@@ -195,8 +203,13 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
       const nestedResp: Record<string, any> = {};
       param.params.forEach(nestedParam => nestedResp[nestedParam.name] = formatParam(nestedParam));
       return nestedResp;
+    } else {
+      try {
+        return JSON.parse(param.value);
+      } catch (e) {
+        return {};
+      }
     }
-    return Object(param.value);
   } else {
     return param.value;
   }
@@ -387,9 +400,9 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                     >
                       <ObsParamInput
                         v-for="objParam in param.params"
+                        :key="`${param.name}-${objParam.name}`"
                         v-model:value="objParam.value"
                         :param="objParam"
-                        :key="objParam.name"
                       />
                     </div>
                     <div
@@ -415,14 +428,26 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                 :disabled="!selectedRequest"
               >
                 Add Param
+                <v-icon class="ml-2">mdi-plus</v-icon>
               </v-btn>
               <v-btn
-                class="my-3"
+                class="my-2 mr-2 ml-auto"
+                color="primary"
+                variant="text"
+                :disabled="!clipboardSupported"
+                @click="copyObsRaw"
+              >
+                Copy OBS Raw
+                <v-icon class="ml-2">mdi-content-copy</v-icon>
+              </v-btn>
+              <v-btn
+                class="my-2"
                 color="success"
                 :disabled="!isConnected || !selectedRequest"
                 @click="sendSelectedRequest"
               >
                 Send Request
+                <v-icon class="ml-2">mdi-send</v-icon>
               </v-btn>
             </div>
           </div>

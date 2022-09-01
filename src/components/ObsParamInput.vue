@@ -8,6 +8,15 @@ type Props = {
 };
 const props = defineProps<Props>();
 const value = useVModel(props, 'value');
+
+function isValidJson(v) {
+  try {
+    JSON.parse(v);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 </script>
 
 <template>
@@ -24,6 +33,20 @@ const value = useVModel(props, 'value');
     persistent-hint
     class="mr-2 mb-2"
   />
+
+  <v-textarea
+    v-else-if="param.type === ObsParamType.OBJECT"
+    v-model="value"
+    label="JSON Value"
+    density="compact"
+    :hint="param.description"
+    persistent-hint
+    class="mr-2 mb-2"
+    validate-on-blur
+    auto-grow
+    :rules="[isValidJson(value) || 'Invalid JSON']"
+  />
+
   <v-text-field
     v-else
     v-model="value"
