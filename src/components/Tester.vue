@@ -25,8 +25,8 @@ const obs = new OBSWebSocket();
 
 const host = useStorage('obs-store:host', '127.0.0.1');
 const port = useStorage('obs-store:port', 4455);
+const password = useStorage('obs-store:password', '');
 const url = computed<string>(() => `ws://${host.value}:${port.value}`);
-const password = ref<string>('');
 const connecting = ref<boolean>(false);
 const error = ref<string | null>();
 const isConnected = ref<boolean>(false);
