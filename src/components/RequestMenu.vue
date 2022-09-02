@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { obsRequestTypeOptions, type ObsRequestTypeOption } from '@/common/obs.constants';
-import { useVModel } from '@vueuse/core';
-import { computed } from 'vue';
+import { debouncedRef, useVModel } from '@vueuse/core';
+import { computed, ref } from 'vue';
 
 type Props = {
   value?: ObsRequestTypeOption,
@@ -10,59 +10,59 @@ type Props = {
 const props = defineProps<Props>();
 const selectedRequest = useVModel(props, 'value');
 
-// add group headers for request autocomplete
-const requestItems = computed<Array<ObsRequestTypeOption | { header: string; }>>(
-  () => {
-    const items = [];
-    let prevGroup = null;
-    for (const requestType of obsRequestTypeOptions) {
-      if (prevGroup && prevGroup === requestType.group) {
-        items.push({
-          ...requestType,
-        });
-      } else {
-        prevGroup = requestType.group;
-        items.push({
-          header: `${requestType.group}`,
-        });
-        items.push({
-          ...requestType,
-        });
-      }
-    }
-    return items;
-  }
-);
+const search = debouncedRef<string>(ref(''), 500);
+const filteredRequestItems = computed(() => {
+  if (!search.value) return obsRequestTypeOptions;
+
+  return obsRequestTypeOptions.filter(item => {
+    const text = `${item.name} ${item.description} ${item.group}`;
+    return !!text.match(new RegExp(search.value ?? '', 'i'));
+  });
+});
 </script>
 
 <template>
-  <v-list
-    color="primary"
-    nav
-    outlined
-    class="request-list overflow-y-auto py-0 rounded-lg"
-  >
-    <template v-for="item in requestItems">
-      <v-list-subheader
-        v-if="item.header"
-        :key="item.header"
-        class="bg-grey-darken-4 mt-3"
-      >
-        <span class="text-primary text-uppercase font-weight-bold">{{
-           item.header
-          }}</span>
-      </v-list-subheader>
-      <v-list-item
-        v-else
-        :key="item.name"
-        :active="selectedRequest && selectedRequest.name === item.name"
-        :disabled="obsInfo && selectedRequest && !obsInfo.availableRequests.includes(selectedRequest.name)"
-        color="primary"
-        @click="selectedRequest = item"
-      >
-        <v-list-item-title>{{  item.name  }}</v-list-item-title>
-        <v-list-item-subtitle>{{  item.description  }}</v-list-item-subtitle>
-      </v-list-item>
-    </template>
-  </v-list>
+  <v-sheet class="rounded-lg">
+    <v-text-field
+      v-model="search"
+      search
+      label="Search"
+      density="compact"
+      variety="solo"
+      hide-details
+    />
+
+    <v-list
+      color="primary"
+      nav
+      outlined
+      class="request-list overflow-y-auto py-0"
+    >
+      <template v-for="(item, idx) in filteredRequestItems" :key="item.name">
+        <v-list-subheader
+          v-if="item.group !== filteredRequestItems[idx-1]?.group"
+          class="bg-grey-darken-4 mt-3"
+        >
+          <span class="text-primary text-uppercase font-weight-bold">{{
+            item.group
+            }}</span>
+        </v-list-subheader>
+        <v-list-item
+          :active="selectedRequest && selectedRequest.name === item.name"
+          :disabled="obsInfo && selectedRequest && !obsInfo.availableRequests.includes(selectedRequest.name)"
+          color="primary"
+          @click="selectedRequest = item"
+        >
+          <v-list-item-title>{{ item.name }}</v-list-item-title>
+          <v-list-item-subtitle>{{ item.description }}</v-list-item-subtitle>
+        </v-list-item>
+      </template>
+    </v-list>
+  </v-sheet>
 </template>
+
+<style scoped>
+.request-list {
+  max-height: calc(100vh - 115px);
+}
+</style>

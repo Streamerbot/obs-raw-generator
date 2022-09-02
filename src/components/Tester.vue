@@ -461,9 +461,3 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
     </v-row>
   </v-container>
 </template>
-
-<style scoped>
-.request-list {
-  max-height: calc(100vh - 85px);
-}
-</style>
