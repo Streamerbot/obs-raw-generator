@@ -412,6 +412,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                       <ObsParamInput
                         v-model:value="param.value"
                         :param="param"
+                        :obs="obs"
                       />
                     </div>
                   </div>

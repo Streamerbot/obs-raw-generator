@@ -1,3 +1,4 @@
+import type OBSWebSocket from 'obs-websocket-js';
 import type { OBSRequestTypes } from 'obs-websocket-js';
 
 export enum RequestFormatType {
@@ -41,6 +42,8 @@ export type ObsRequestParam = {
   description: string;
   required?: boolean;
   params?: ObsRequestParam[];
+  getOptions?: (obs: OBSWebSocket) => Promise<string[]>
+  options?: string[];
 };
 
 export type ObsRequestTypeOption = {
@@ -115,6 +118,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of hotkey to trigger',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetHotkeyList');
+          return res.hotkeys;
+        }
       },
     ],
   },
