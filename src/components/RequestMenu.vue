@@ -30,13 +30,14 @@ const filteredRequestItems = computed(() => {
       density="compact"
       variety="solo"
       hide-details
+      clearable
     />
 
     <v-list
       color="primary"
       nav
       outlined
-      class="request-list overflow-y-auto py-0"
+      class="request-list overflow-y-auto"
     >
       <template v-for="(item, idx) in filteredRequestItems" :key="item.name">
         <v-list-subheader
