@@ -1586,6 +1586,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene to get the items of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
     ],
   },
@@ -1599,6 +1603,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the group to get the items of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
     ],
   },
@@ -1612,12 +1620,20 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene or group to search in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sourceName',
         type: ObsParamType.STRING,
         description: 'Name of the source to find.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'searchOffset',
@@ -1638,12 +1654,20 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene to create the new item in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sourceName',
         type: ObsParamType.STRING,
         description: 'Name of the source to add to the scene.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'sceneItemEnabled',
@@ -1663,6 +1687,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1682,6 +1710,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1708,6 +1740,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1727,6 +1763,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1752,6 +1792,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1771,6 +1815,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1796,6 +1844,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1815,6 +1867,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1840,6 +1896,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1859,6 +1919,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1884,6 +1948,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -1903,6 +1971,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene the item is in.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'sceneItemId',
@@ -2057,6 +2129,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the media input.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -2070,6 +2146,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the media input.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'mediaCursor',
@@ -2090,6 +2170,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the media input.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'mediaCursorOffset',
@@ -2109,6 +2193,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the media input.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'mediaAction',
@@ -2147,6 +2235,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to open the dialog of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -2160,6 +2252,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to open the dialog of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -2173,6 +2269,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to open the dialog of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
