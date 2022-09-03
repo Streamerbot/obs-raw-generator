@@ -705,6 +705,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         description:
           'Name of the scene transition to use as override. Specify `null` to remove.',
         required: false,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneTransitionList');
+          return res.transitions.map(transitions => transitions.transitionName);
+        },
       },
       {
         name: 'transitionDuration',
@@ -758,6 +762,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene to add the input to as a scene item.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'inputName',
@@ -770,6 +778,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'The kind of input to be created.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputKind);
+        },
       },
       {
         name: 'inputSettings',
@@ -796,6 +808,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to remove.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -809,6 +825,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Current input name.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'newInputName',
@@ -828,6 +848,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Input kind to get the default settings for.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputKind);
+        },
       },
     ],
   },
@@ -841,6 +865,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to get the settings of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -854,6 +882,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to set the settings of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'inputSettings',
@@ -880,6 +912,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of input to get the mute state of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -893,6 +929,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to set the mute state of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'inputMuted',
@@ -912,6 +952,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to toggle the mute state of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -925,6 +969,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to get the volume of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -938,6 +986,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to set the volume of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'inputVolumeMul',
@@ -963,6 +1015,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to get the audio balance of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -976,6 +1032,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to set the audio balance of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'inputAudioBalance',
@@ -996,6 +1056,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to get the audio sync offset of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -1009,6 +1073,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to set the audio sync offset for.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'inputAudioSyncOffset',
@@ -1028,6 +1096,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to set the audio monitor of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -1041,6 +1113,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input to set the audio monitor type for.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'monitorType',
@@ -1060,6 +1136,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -1073,6 +1153,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'inputAudioTracks',
@@ -1092,6 +1176,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'propertyName',
@@ -1111,6 +1199,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the input.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'propertyName',
@@ -1146,6 +1238,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the transition to make active.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneTransitionList');
+          return res.transitions.map(transitions => transitions.transitionName);
+        },
       },
     ],
   },
@@ -1223,6 +1319,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -1234,8 +1334,12 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
       {
         name: 'filterKind',
         type: ObsParamType.STRING,
-        description: 'Filter kind to get the default settigns for.',
+        description: 'Filter kind to get the default settings for.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSourceFilterList');
+          return res.filters.map(filters => filters.filterKind);
+        },
       },
     ],
   },
@@ -1249,12 +1353,20 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source to add the filter to.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'filterName',
         type: ObsParamType.STRING,
         description: 'Name of the new filter to be created.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSourceFilterList');
+          return res.filters.map(filters => filters.filterName);
+        },
       },
       {
         name: 'filterKind',
@@ -1280,12 +1392,20 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source the filter is on.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'filterName',
         type: ObsParamType.STRING,
         description: 'Name of the filter to remove.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSourceFilterList');
+          return res.filters.map(filters => filters.filterName);
+        },
       },
     ],
   },
@@ -1299,12 +1419,20 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source the filter is on.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'filterName',
         type: ObsParamType.STRING,
         description: 'Current name of the filter.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSourceFilterList');
+          return res.filters.map(filters => filters.filterName);
+        },
       },
       {
         name: 'newFilterName',
@@ -1324,12 +1452,20 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'filterName',
         type: ObsParamType.STRING,
         description: 'Name of the filter.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSourceFilterList');
+          return res.filters.map(filters => filters.filterName);
+        },
       },
     ],
   },
@@ -1343,12 +1479,20 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source the filter is on.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'filterName',
         type: ObsParamType.STRING,
         description: 'Name of the filter.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSourceFilterList');
+          return res.filters.map(filters => filters.filterName);
+        },
       },
       {
         name: 'filterIndex',
@@ -1368,12 +1512,20 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source the filter is on.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'filterName',
         type: ObsParamType.STRING,
         description: 'Name of the filter to set the settings of.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSourceFilterList');
+          return res.filters.map(filters => filters.filterName);
+        },
       },
       {
         name: 'filterSettings',
@@ -1400,12 +1552,20 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source the filter is on.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'filterName',
         type: ObsParamType.STRING,
         description: 'Name of the filter.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSourceFilterList');
+          return res.filters.map(filters => filters.filterName);
+        },
       },
       {
         name: 'filterEnabled',
