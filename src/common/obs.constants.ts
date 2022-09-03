@@ -460,6 +460,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Source to get the state of',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
     ],
   },
@@ -473,6 +477,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source to take a screenshot of',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'imageFormat',
@@ -512,6 +520,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the source to take a screenshot of',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputName);
+        },
       },
       {
         name: 'imageFormat',
@@ -665,6 +677,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
     ],
   },
@@ -678,6 +694,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'transitionName',
