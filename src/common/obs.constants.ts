@@ -255,6 +255,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene collection to switch to.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneCollectionList');
+          return res.sceneCollections;
+        },
       },
     ],
   },
@@ -287,6 +291,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the profile to switch to.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetProfileList');
+          return res.profiles;
+        },
       },
     ],
   },
@@ -314,6 +322,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the profile to remove.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetProfileList');
+          return res.profiles;
+        },
       },
     ],
   },
@@ -561,6 +573,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Scene to set as the current program scene.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
     ],
   },
@@ -579,6 +595,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Scene to set as the current preview scene.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
     ],
   },
@@ -605,6 +625,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene to remove.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
     ],
   },
@@ -618,6 +642,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the scene to be renamed',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSceneList');
+          return res.scenes.map(scene => scene.sceneName);
+        },
       },
       {
         name: 'newSceneName',
