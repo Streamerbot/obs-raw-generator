@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ObsParamType, type ObsRequestContext, type ObsRequestParam } from '@/common/obs.constants';
+import { ObsParamType, type ObsRequestContext, type ObsRequestParam, type SelectOptionType } from '@/common/obs.constants';
 import { useVModel } from '@vueuse/core';
 import type OBSWebSocket from 'obs-websocket-js';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -22,7 +22,7 @@ function isValidJson(v) {
   }
 }
 
-const selectOptions = ref<string[]>([]);
+const selectOptions = ref<string[] | SelectOptionType[]>([]);
 const isSelect = computed<boolean>(() => !!props.obs?.identified && !!props.param?.getOptions);
 
 onMounted(loadValues);
@@ -36,9 +36,17 @@ watch([
 async function loadValues(): Promise<void> {
   if (props.param.getOptions && props.obs) {
     try {
-      const options = (await props.param.getOptions(props.obs, props.ctx)) as string[];
-      if (value.value && !options.includes(value.value)) value.value = null;
-      selectOptions.value = options;
+      const options = (await props.param.getOptions(props.obs, props.ctx));
+
+      if (typeof options[0] === 'object') {
+        if (value.value && !(options as SelectOptionType[]).find(option => option.value === value.value)) {
+          value.value = null;
+        }
+        selectOptions.value = options as SelectOptionType[];
+      } else if (value.value && !options.includes(value.value)) {
+        value.value = null;
+      }
+      selectOptions.value = options as string[];
     } catch (e) {
       return;
     }

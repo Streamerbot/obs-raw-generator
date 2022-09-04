@@ -1,7 +1,7 @@
 import type OBSWebSocket from 'obs-websocket-js';
 import type { OBSRequestTypes } from 'obs-websocket-js';
 import type { JsonObject, JsonValue } from 'type-fest';
-import { GET_SCENE_SOURCE_NAME_OPTIONS, GET_SOURCE_FILTER_NAME_OPTIONS } from './obs-get-options.constants';
+import { GET_SCENE_ITEM_ID_OPTIONS, GET_SCENE_SOURCE_NAME_OPTIONS, GET_SOURCE_FILTER_NAME_OPTIONS } from './obs-get-options.constants';
 
 export enum RequestFormatType {
   STREAMERBOT_RAW = 'streamerbot_raw',
@@ -36,7 +36,10 @@ export enum ObsRequestTypeGroup {
   RECORD = 'Record',
   MEDIA = 'Media Inputs',
   UI = 'UI',
-}
+};
+
+export type SelectOptionType = { value: string, title: string };
+export type SelectOptionsType = (JsonValue | SelectOptionType | string | undefined)[]
 
 export type ObsRequestParam = {
   name: string;
@@ -46,8 +49,8 @@ export type ObsRequestParam = {
   params?: ObsRequestParam[];
   value?: any;
   getOptions?:
-    | ((obs: OBSWebSocket, ctx?: ObsRequestContext) => Promise<(JsonValue | undefined)[]>)
-    | ((obs: OBSWebSocket) => Promise<(JsonValue | undefined)[]>);
+    | ((obs: OBSWebSocket, ctx?: ObsRequestContext) => Promise<SelectOptionsType>)
+    | ((obs: OBSWebSocket) => Promise<SelectOptionsType>);
   getValue?:
     | ((obs: OBSWebSocket, ctx?: ObsRequestContext) => Promise<(JsonValue | JsonObject | undefined)>)
     | ((obs: OBSWebSocket) => Promise<(JsonValue | JsonObject | undefined)>);
@@ -1206,7 +1209,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.OBJECT,
         description: 'Track settings to apply.',
         required: true,
-        getValue: async(obs: OBSWebSocket, ctx: ObsRequestContext) => {
+        getValue: async (obs: OBSWebSocket, ctx: ObsRequestContext) => {
           const inputName = ctx?.params?.find(
             (param) => param.name === 'inputName'
           )?.value;
@@ -1214,7 +1217,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
 
           const res = await obs.call('GetInputAudioTracks', { inputName });
           return res.inputAudioTracks;
-        }
+        },
       },
     ],
   },
@@ -1728,6 +1731,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
     ],
   },
@@ -1751,6 +1755,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
       {
         name: 'destinationSceneName',
@@ -1781,6 +1786,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
     ],
   },
@@ -1804,6 +1810,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
       {
         name: 'sceneItemTransform',
@@ -1833,6 +1840,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
     ],
   },
@@ -1856,6 +1864,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
       {
         name: 'sceneItemEnabled',
@@ -1885,6 +1894,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
     ],
   },
@@ -1908,6 +1918,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
       {
         name: 'sceneItemLocked',
@@ -1937,6 +1948,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
     ],
   },
@@ -1960,6 +1972,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
       {
         name: 'sceneItemIndex',
@@ -1989,6 +2002,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
     ],
   },
@@ -2012,6 +2026,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.NUMBER,
         description: 'Numeric ID of the scene item.',
         required: true,
+        getOptions: GET_SCENE_ITEM_ID_OPTIONS,
       },
       {
         name: 'sceneItemBlendMode',
