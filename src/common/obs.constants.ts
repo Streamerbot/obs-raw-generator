@@ -202,8 +202,12 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         name: 'realm',
         type: ObsParamType.STRING,
         description:
-          'The data realm to select. `OBS_WEBSOCKET_DATA_REALM_GLOBAL` or `OBS_WEBSOCKET_DATA_REALM_PROFILE`',
+          'The data realm to select.',
         required: true,
+        getOptions: async (_obs: OBSWebSocket) => {
+          const res = ['OBS_WEBSOCKET_DATA_REALM_GLOBAL', 'OBS_WEBSOCKET_DATA_REALM_PROFILE']
+          return res;
+        },
       },
       {
         name: 'slotName',
@@ -223,8 +227,12 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         name: 'realm',
         type: ObsParamType.STRING,
         description:
-          'The data realm to select. `OBS_WEBSOCKET_DATA_REALM_GLOBAL` or `OBS_WEBSOCKET_DATA_REALM_PROFILE`',
+          'The data realm to select.',
         required: true,
+        getOptions: async (_obs: OBSWebSocket) => {
+          const res = ['OBS_WEBSOCKET_DATA_REALM_GLOBAL', 'OBS_WEBSOCKET_DATA_REALM_PROFILE']
+          return res;
+        },
       },
       {
         name: 'slotName',
@@ -488,6 +496,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         description:
           'Image compression format to use. Use `GetVersion` to get compatible image formats',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetVersion');
+          return res.supportedImageFormats;
+        },
       },
       {
         name: 'imageWidth',
@@ -531,6 +543,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         description:
           'Image compression format to use. Use `GetVersion` to get compatible image formats',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetVersion');
+          return res.supportedImageFormats;
+        },
       },
       {
         name: 'imageFilePath',
@@ -729,6 +745,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Restrict the array to only inputs of the specified kind.',
         required: false,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetInputList');
+          return res.inputs.map(inputs => inputs.inputKind);
+        },
       },
     ],
   },
@@ -1123,6 +1143,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Audio monitor type.',
         required: true,
+        getOptions: async (_obs: OBSWebSocket) => {
+          const res = ['OBS_MONITORING_TYPE_NONE', 'OBS_MONITORING_TYPE_MONITOR_ONLY', 'OBS_MONITORING_TYPE_MONITOR_AND_OUTPUT']
+          return res;
+        },
       },
     ],
   },
@@ -1163,7 +1187,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.OBJECT,
         description: 'Track settings to apply.',
         required: true,
-      },
+    },
     ],
   },
   {
@@ -1363,16 +1387,16 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'Name of the new filter to be created.',
         required: true,
-        getOptions: async (obs: OBSWebSocket) => {
-          const res = await obs.call('GetSourceFilterList');
-          return res.filters.map(filters => filters.filterName);
-        },
       },
       {
         name: 'filterKind',
         type: ObsParamType.STRING,
         description: 'The kind of filter to be created.',
         required: true,
+        getOptions: async (obs: OBSWebSocket) => {
+          const res = await obs.call('GetSourceFilterList');
+          return res.filters.map(filters => filters.filterKind);
+        },
       },
       {
         name: 'filterSettings',
@@ -1987,6 +2011,10 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.STRING,
         description: 'New blend mode.',
         required: true,
+        getOptions: async (_obs: OBSWebSocket) => {
+          const res = ['OBS_BLEND_NORMAL', 'OBS_BLEND_ADDITIVE', 'OBS_BLEND_SUBTRACT', 'OBS_BLEND_SCREEN', 'OBS_BLEND_MULTIPLY', 'OBS_BLEND_LIGHTEN', 'OBS_BLEND_DARKEN']
+          return res;
+        },
       },
     ],
   },
