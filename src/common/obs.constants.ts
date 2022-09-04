@@ -1,6 +1,6 @@
 import type OBSWebSocket from 'obs-websocket-js';
 import type { OBSRequestTypes } from 'obs-websocket-js';
-import type { JsonValue } from 'type-fest';
+import type { JsonObject, JsonValue } from 'type-fest';
 import { GET_SCENE_SOURCE_NAME_OPTIONS, GET_SOURCE_FILTER_NAME_OPTIONS } from './obs-get-options.constants';
 
 export enum RequestFormatType {
@@ -48,7 +48,9 @@ export type ObsRequestParam = {
   getOptions?:
     | ((obs: OBSWebSocket, ctx?: ObsRequestContext) => Promise<(JsonValue | undefined)[]>)
     | ((obs: OBSWebSocket) => Promise<(JsonValue | undefined)[]>);
-  options?: string[];
+  getValue?:
+    | ((obs: OBSWebSocket, ctx?: ObsRequestContext) => Promise<(JsonValue | JsonObject | undefined)>)
+    | ((obs: OBSWebSocket) => Promise<(JsonValue | JsonObject | undefined)>);
 };
 
 export type ObsRequestTypeOption = {
@@ -1204,6 +1206,15 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.OBJECT,
         description: 'Track settings to apply.',
         required: true,
+        getValue: async(obs: OBSWebSocket, ctx: ObsRequestContext) => {
+          const inputName = ctx?.params?.find(
+            (param) => param.name === 'inputName'
+          )?.value;
+          if (!inputName) return;
+
+          const res = await obs.call('GetInputAudioTracks', { inputName });
+          return res.inputAudioTracks;
+        }
       },
     ],
   },

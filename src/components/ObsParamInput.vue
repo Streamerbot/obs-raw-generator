@@ -25,26 +25,37 @@ function isValidJson(v) {
 const selectOptions = ref<string[]>([]);
 const isSelect = computed<boolean>(() => !!props.obs?.identified && !!props.param?.getOptions);
 
-onMounted(async () => selectOptions.value = await getSelectOptions());
+onMounted(loadValues);
 watch([
   () => props.obs?.identified,
   () => props.param,
   () => props.ctx,
   isSelect,
-], async () => selectOptions.value = await getSelectOptions());
+], loadValues);
 
-async function getSelectOptions(): Promise<string[]> {
-  console.log('test');
+async function loadValues(): Promise<void> {
   if (props.param.getOptions && props.obs) {
     try {
       const options = (await props.param.getOptions(props.obs, props.ctx)) as string[];
       if (value.value && !options.includes(value.value)) value.value = null;
-      return options;
+      selectOptions.value = options;
     } catch (e) {
-      return [];
+      return;
     }
   }
-  return [];
+  else if (props.param.getValue && props.obs) {
+    try {
+      const newVal = (await props.param.getValue(props.obs, props.ctx));
+      if (!newVal) return;
+
+
+      if (ObsParamType.OBJECT) {
+        value.value = JSON.stringify(newVal);
+      }
+    } catch (e) {
+      return;
+    }
+  }
 }
 </script>
 
