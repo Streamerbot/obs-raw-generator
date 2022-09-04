@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { ObsParamType, type ObsRequestParam } from '@/common/obs.constants';
+import { ObsParamType, type ObsRequestContext, type ObsRequestParam } from '@/common/obs.constants';
 import { useVModel } from '@vueuse/core';
 import type OBSWebSocket from 'obs-websocket-js';
 import { computed, onMounted, ref, watch } from 'vue';
 
 type Props = {
   param: ObsRequestParam,
-  value: any
-  obs?: OBSWebSocket
+  value: any,
+  obs?: OBSWebSocket,
+  ctx?: ObsRequestContext,
 };
 const props = defineProps<Props>();
 const value = useVModel(props, 'value');
@@ -28,14 +29,17 @@ onMounted(async () => selectOptions.value = await getSelectOptions());
 watch([
   () => props.obs?.identified,
   () => props.param,
+  () => props.ctx,
   isSelect,
 ], async () => selectOptions.value = await getSelectOptions());
 
 async function getSelectOptions(): Promise<string[]> {
+  console.log('test');
   if (props.param.getOptions && props.obs) {
     try {
-      console.log('test', (await props.param.getOptions(props.obs)));
-      return await props.param.getOptions(props.obs);
+      const options = (await props.param.getOptions(props.obs, props.ctx)) as string[];
+      if (value.value && !options.includes(value.value)) value.value = null;
+      return options;
     } catch (e) {
       return [];
     }

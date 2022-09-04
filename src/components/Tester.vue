@@ -413,6 +413,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                         v-model:value="param.value"
                         :param="param"
                         :obs="obs"
+                        :ctx="{ ...selectedRequest, params: selectedParams[selectedRequest.name] }"
                       />
                     </div>
                   </div>
