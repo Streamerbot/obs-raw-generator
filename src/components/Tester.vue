@@ -84,9 +84,9 @@ function formatRequest(
       };
 
     case RequestFormatType.STREAMERBOT_RAW_CPH:
-      return `CPH.ObsSendRaw("${requestType}", "${JSON.stringify(
+      return `CPH.ObsSendRaw("${requestType}", ${JSON.stringify(
         JSON.stringify(requestData)
-      )}", 1)`;
+      )}, 1)`;
 
     case RequestFormatType.STREAMERBOT_RAW:
     default:
