@@ -5,6 +5,7 @@ import { GET_SCENE_ITEM_ID_OPTIONS, GET_SCENE_SOURCE_NAME_OPTIONS, GET_SOURCE_FI
 
 export enum RequestFormatType {
   STREAMERBOT_RAW = 'streamerbot_raw',
+  STREAMERBOT_RAW_CPH = 'streamerbot_raw_cph',
   OBS = 'obs'
 }
 

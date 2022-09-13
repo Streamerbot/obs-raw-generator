@@ -2,7 +2,9 @@
 import {
 ObsParamType,
 obsParamTypeOptions,
-obsRequestTypeOptions, RequestFormatType, type ObsRequestParam,
+obsRequestTypeOptions,
+RequestFormatType,
+type ObsRequestParam,
 type ObsRequestTypeOption
 } from '@/common/obs.constants';
 import { useClipboard, useStorage } from '@vueuse/core';
@@ -32,7 +34,6 @@ const error = ref<string | null>();
 const isConnected = ref<boolean>(false);
 const obsInfo = ref<any>();
 
-
 const selectedRequest = ref<ObsRequestTypeOption>();
 // disable local storage for now
 // const selectedParams = useStorage<Record<string, any[]>>(
@@ -52,10 +53,10 @@ onUnmounted(() => {
 });
 
 watch(isConnected, async (val) => {
-  if (!val) return obsInfo.value = null;
+  if (!val) return (obsInfo.value = null);
 
   // auto select first item on connect
-  selectedRequest.value = obsRequestTypeOptions.find(item => !!item.name);
+  selectedRequest.value = obsRequestTypeOptions.find((item) => !!item.name);
 
   // fetch obs version info on connect
   nextTick(async () => {
@@ -67,29 +68,55 @@ watch(isConnected, async (val) => {
 const formatStyle = ref<RequestFormatType>(RequestFormatType.STREAMERBOT_RAW);
 const formattedRequest = computed(() => {
   const data = getFormattedRequestInternal() || {};
+  return formatRequest(formatStyle.value, selectedRequest.value?.name, data);
+});
 
-  switch(formatStyle.value) {
+function formatRequest(
+  formatType: RequestFormatType = RequestFormatType.STREAMERBOT_RAW,
+  requestType: string = '',
+  requestData = {}
+) {
+  switch (formatType) {
     case RequestFormatType.OBS:
       return {
-        'request-type': selectedRequest.value?.name,
-        ...data
+        'request-type': requestType,
+        ...requestData,
       };
+
+    case RequestFormatType.STREAMERBOT_RAW_CPH:
+      return `CPH.ObsSendRaw("${requestType}", "${JSON.stringify(
+        requestData
+      )}")`;
 
     case RequestFormatType.STREAMERBOT_RAW:
     default:
       return {
-        'requestType': selectedRequest.value?.name,
-        'requestData': data
+        requestType,
+        requestData,
       };
   }
-});
+}
 
 const { copy, isSupported: clipboardSupported } = useClipboard();
 function copyObsRaw() {
-  copy(JSON.stringify({
-    'requestType': selectedRequest.value?.name,
-    'requestData': getFormattedRequestInternal() ?? {}
-  }));
+  copy(
+    JSON.stringify(
+      formatRequest(
+        RequestFormatType.STREAMERBOT_RAW,
+        selectedRequest.value?.name,
+        getFormattedRequestInternal() ?? {}
+      )
+    )
+  );
+}
+function copyObsRawCPH() {
+  copy(
+    `${formatRequest(
+      RequestFormatType.STREAMERBOT_RAW_CPH,
+      selectedRequest.value?.name,
+      getFormattedRequestInternal() ?? {}
+    )}`
+  );
 }
 
 watch(selectedRequest, (val, prev) => {
@@ -146,7 +173,10 @@ function initEventListeners() {
   obs.on('ConnectionError', () => (isConnected.value = false));
 }
 
-async function sendRequest(name: keyof OBSRequestTypes, data: Record<string, any> = {}) {
+async function sendRequest(
+  name: keyof OBSRequestTypes,
+  data: Record<string, any> = {}
+) {
   return await obs.call(name, data);
 }
 
@@ -154,7 +184,10 @@ async function sendSelectedRequest() {
   if (!selectedRequest.value) return;
 
   try {
-    response.value = await sendRequest(selectedRequest.value.name, getFormattedRequestInternal());
+    response.value = await sendRequest(
+      selectedRequest.value.name,
+      getFormattedRequestInternal()
+    );
   } catch (e) {
     response.value = e;
   }
@@ -193,7 +226,7 @@ function getFormattedRequestInternal() {
   return resp;
 }
 
-function formatParam(param: ObsRequestParam & { value: any; }) {
+function formatParam(param: ObsRequestParam & { value: any }) {
   if (param.type === ObsParamType.NUMBER) {
     return Number(param.value);
   } else if (param.type === ObsParamType.BOOLEAN) {
@@ -201,7 +234,10 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
   } else if (param.type === ObsParamType.OBJECT) {
     if (param.params) {
       const nestedResp: Record<string, any> = {};
-      param.params.forEach(nestedParam => nestedResp[nestedParam.name] = formatParam(nestedParam));
+      param.params.forEach(
+        (nestedParam) =>
+          (nestedResp[nestedParam.name] = formatParam(nestedParam))
+      );
       return nestedResp;
     } else {
       try {
@@ -217,10 +253,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
 </script>
 
 <template>
-  <v-toolbar
-    density="compact"
-    color="#1d1d1d"
-  >
+  <v-toolbar density="compact" color="#1d1d1d">
     <span class="d-flex flex-column mx-5">
       <span>OBS Raw Generator</span>
       <small class="text-grey">for Streamer.bot</small>
@@ -237,7 +270,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
           class="mr-2 my-1"
           hide-details
           :disabled="isConnected"
-          style="min-width: 150px;"
+          style="min-width: 150px"
         />
         <v-text-field
           v-model.number="port"
@@ -248,7 +281,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
           class="mr-2 my-1"
           hide-details
           :disabled="isConnected"
-          style="min-width: 75px;"
+          style="min-width: 75px"
         />
         <v-text-field
           v-model="password"
@@ -259,7 +292,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
           class="mr-2 my-1"
           hide-details
           :disabled="isConnected"
-          style="min-width: 150px;"
+          style="min-width: 150px"
         />
         <v-btn
           v-if="isConnected"
@@ -267,7 +300,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
           variant="outlined"
           class="ml-2"
           @click="disconnect"
-        >Disconnect <v-icon class="ml-2">mdi-close-circle</v-icon>
+          >Disconnect <v-icon class="ml-2">mdi-close-circle</v-icon>
         </v-btn>
         <v-btn
           v-else
@@ -276,7 +309,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
           class="ml-2"
           :loading="connecting"
           @click="connect"
-        >Connect <v-icon class="ml-2">mdi-chevron-right-circle</v-icon>
+          >Connect <v-icon class="ml-2">mdi-chevron-right-circle</v-icon>
         </v-btn>
       </span>
     </v-toolbar-items>
@@ -284,30 +317,16 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
 
   <v-container fluid>
     <v-row>
-      <v-col
-        cols="12"
-        sm="4"
-        xl="3"
-      >
+      <v-col cols="12" sm="4" xl="3">
         <RequestMenu
           v-model:value="selectedRequest"
           :obs-info="obsInfo"
         ></RequestMenu>
       </v-col>
-      <v-col
-        cols="12"
-        sm="8"
-        xl="9"
-      >
-
+      <v-col cols="12" sm="8" xl="9">
         <div>
           <v-slide-y-transition>
-            <v-alert
-              v-if="error"
-              type="error"
-              density="compact"
-              class="my-3"
-            >
+            <v-alert v-if="error" type="error" density="compact" class="my-3">
               {{ error }}
             </v-alert>
           </v-slide-y-transition>
@@ -318,23 +337,14 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
               v-if="obsInfo"
             >
               <span class="mr-5 text-success d-flex align-center">
-                <v-icon
-                  size="small"
-                  color="success"
-                >mdi-check-circle</v-icon>
+                <v-icon size="small" color="success">mdi-check-circle</v-icon>
                 <span class="ml-1">Connected</span>
               </span>
-              <small>
-                OBS Studio {{ obsInfo.obsVersion }}
-              </small>
+              <small> OBS Studio {{ obsInfo.obsVersion }} </small>
               <span class="mx-2"></span>
-              <small>
-                OBS WebSocket {{ obsInfo.obsWebSocketVersion }}
-              </small>
+              <small> OBS WebSocket {{ obsInfo.obsWebSocketVersion }} </small>
               <span class="mx-2"></span>
-              <small>
-                RPC v{{ obsInfo.rpcVersion }}
-              </small>
+              <small> RPC v{{ obsInfo.rpcVersion }} </small>
               <span class="mx-2"></span>
               <small>
                 {{ obsInfo.platformDescription }}
@@ -381,7 +391,7 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                       density="compact"
                       :disabled="param.required"
                       class="mr-2 align-self-start"
-                      style="max-width: 200px;"
+                      style="max-width: 200px"
                     ></v-select>
 
                     <v-text-field
@@ -390,13 +400,13 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                       density="compact"
                       :disabled="param.required"
                       class="mr-2 align-self-start"
-                      style="max-width: 350px;"
+                      style="max-width: 350px"
                     />
 
                     <div
                       v-if="param.type === ObsParamType.OBJECT && param.params"
                       class="d-flex flex-column"
-                      style="width: 50%;"
+                      style="width: 50%"
                     >
                       <ObsParamInput
                         v-for="objParam in param.params"
@@ -405,15 +415,15 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                         :param="objParam"
                       />
                     </div>
-                    <div
-                      v-else
-                      style="width: 50%;"
-                    >
+                    <div v-else style="width: 50%">
                       <ObsParamInput
                         v-model:value="param.value"
                         :param="param"
                         :obs="obs"
-                        :ctx="{ ...selectedRequest, params: selectedParams[selectedRequest.name] }"
+                        :ctx="{
+                          ...selectedRequest,
+                          params: selectedParams[selectedRequest.name],
+                        }"
                       />
                     </div>
                   </div>
@@ -432,8 +442,19 @@ function formatParam(param: ObsRequestParam & { value: any; }) {
                 Add Param
                 <v-icon class="ml-2">mdi-plus</v-icon>
               </v-btn>
+              <v-spacer class="ml-auto" />
               <v-btn
-                class="my-2 mr-2 ml-auto"
+                class="my-2 mr-2"
+                color="primary"
+                variant="text"
+                :disabled="!clipboardSupported"
+                @click="copyObsRawCPH"
+              >
+                Copy CPH
+                <v-icon class="ml-2">mdi-content-copy</v-icon>
+              </v-btn>
+              <v-btn
+                class="my-2 mr-2"
                 color="primary"
                 variant="text"
                 :disabled="!clipboardSupported"
