@@ -45,6 +45,9 @@ const response = ref<any>({});
 
 onMounted(() => {
   initEventListeners();
+  if (window.location.hash) {
+    selectedRequest.value = obsRequestTypeOptions.find((item) => item.name === window.location.hash.slice(1));
+  }
   connect();
 });
 
@@ -56,7 +59,7 @@ watch(isConnected, async (val) => {
   if (!val) return (obsInfo.value = null);
 
   // auto select first item on connect
-  selectedRequest.value = obsRequestTypeOptions.find((item) => !!item.name);
+  selectedRequest.value = selectedRequest.value ?? obsRequestTypeOptions.find((item) => !!item.name);
 
   // fetch obs version info on connect
   nextTick(async () => {

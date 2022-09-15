@@ -52,6 +52,7 @@ const filteredRequestItems = computed(() => {
           :active="selectedRequest && selectedRequest.name === item.name"
           :disabled="obsInfo && selectedRequest && !obsInfo.availableRequests.includes(selectedRequest.name)"
           color="primary"
+          :href="`#${item.name}`"
           @click="selectedRequest = item"
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
