@@ -322,8 +322,9 @@ function formatParam(param: ObsRequestParam & { value: any }) {
       <v-col cols="12" sm="8" xl="9">
         <div>
           <v-slide-y-transition>
-            <v-alert v-if="error" type="error" density="compact" class="my-3">
-              {{ error }}
+            <v-alert v-if="error" type="error" density="compact" variant="tonal" class="my-3">
+              <v-alert-title>{{ error }}</v-alert-title>
+              <small>OBS Studio must be running with WebSocket enabled</small>
             </v-alert>
           </v-slide-y-transition>
 
