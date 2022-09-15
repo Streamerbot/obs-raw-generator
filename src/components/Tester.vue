@@ -8,9 +8,7 @@ type ObsRequestParam,
 type ObsRequestTypeOption
 } from '@/common/obs.constants';
 import { useClipboard, useStorage } from '@vueuse/core';
-import OBSWebSocket, {
-type OBSRequestTypes
-} from 'obs-websocket-js';
+import OBSWebSocket, { type OBSRequestTypes } from 'obs-websocket-js';
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import CodePreview from './CodePreview.vue';
 import ObsParamInput from './ObsParamInput.vue';
@@ -27,7 +25,7 @@ const error = ref<string | null>();
 const isConnected = ref<boolean>(false);
 const obsInfo = ref<any>();
 
-const selectedRequest = ref<ObsRequestTypeOption>();
+const selectedRequest = ref<ObsRequestTypeOption>(obsRequestTypeOptions[0]);
 // disable local storage for now
 // const selectedParams = useStorage<Record<string, any[]>>(
 //   'obs-store:params',
@@ -39,7 +37,9 @@ const response = ref<any>({});
 onMounted(() => {
   initEventListeners();
   if (window.location.hash) {
-    selectedRequest.value = obsRequestTypeOptions.find((item) => item.name === window.location.hash.slice(1));
+    selectedRequest.value = obsRequestTypeOptions.find(
+      (item) => item.name === window.location.hash.slice(1)
+    ) ?? selectedRequest.value;
   }
   connect();
 });
@@ -50,9 +50,6 @@ onUnmounted(() => {
 
 watch(isConnected, async (val) => {
   if (!val) return (obsInfo.value = null);
-
-  // auto select first item on connect
-  selectedRequest.value = selectedRequest.value ?? obsRequestTypeOptions.find((item) => !!item.name);
 
   // fetch obs version info on connect
   nextTick(async () => {
@@ -322,7 +319,13 @@ function formatParam(param: ObsRequestParam & { value: any }) {
       <v-col cols="12" sm="8" xl="9">
         <div>
           <v-slide-y-transition>
-            <v-alert v-if="error" type="error" density="compact" variant="tonal" class="my-3">
+            <v-alert
+              v-if="error"
+              type="error"
+              density="compact"
+              variant="tonal"
+              class="my-3"
+            >
               <v-alert-title>{{ error }}</v-alert-title>
               <small>OBS Studio must be running with WebSocket enabled</small>
             </v-alert>
