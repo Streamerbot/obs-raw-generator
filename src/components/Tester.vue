@@ -9,19 +9,12 @@ type ObsRequestTypeOption
 } from '@/common/obs.constants';
 import { useClipboard, useStorage } from '@vueuse/core';
 import OBSWebSocket, {
-type OBSEventTypes,
 type OBSRequestTypes
 } from 'obs-websocket-js';
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import CodePreview from './CodePreview.vue';
 import ObsParamInput from './ObsParamInput.vue';
 import RequestMenu from './RequestMenu.vue';
-
-type Schema = {
-  requests?: (keyof OBSRequestTypes)[];
-  events: (keyof OBSEventTypes)[];
-  types: string[];
-};
 
 const obs = new OBSWebSocket();
 
