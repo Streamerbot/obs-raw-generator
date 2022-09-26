@@ -35,7 +35,6 @@ async function loadValues(): Promise<void> {
   if (props.param.getOptions && props.obs?.identified) {
     try {
       const options = (await props.param.getOptions(props.obs, props.ctx));
-      console.log('options', options, typeof options[0]);
 
       if (typeof options[0] === 'object') {
         if (value.value && !(options as SelectOptionType[]).find(option => option.value === value.value)) {
