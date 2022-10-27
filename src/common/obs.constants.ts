@@ -1637,7 +1637,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
   {
     name: 'GetGroupSceneItemList',
     description: 'Gets a list of all scene item groups in a scene',
-    group: ObsRequestTypeGroup.SCENE_ITEM,
+    group: ObsRequestTypeGroup.SCENE,
     params: [
       {
         name: 'sceneName',
@@ -1645,8 +1645,8 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         description: 'Name of the group to get the items of.',
         required: true,
         getOptions: async (obs: OBSWebSocket) => {
-          const res = await obs.call('GetSceneList');
-          return res.scenes.map((scene) => scene.sceneName);
+          const res = await obs.call('GetGroupList');
+          return res.groups.map((group) => group);
         },
       },
     ],
