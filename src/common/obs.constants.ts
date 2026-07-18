@@ -1210,14 +1210,15 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         type: ObsParamType.OBJECT,
         description: 'Track settings to apply.',
         required: true,
-        getValue: async (obs: OBSWebSocket, ctx: ObsRequestContext) => {
-          const inputName = ctx?.params?.find(
-            (param) => param.name === 'inputName'
-          )?.value;
-          if (!inputName) return;
-          //The line below is causing edits to not be allowed for the SetInputAudioTracks call.
+        //The lines below is causing edits to not be allowed for the SetInputAudioTracks call.
+        //getValue: async (obs: OBSWebSocket, ctx: ObsRequestContext) => {
+        //  const inputName = ctx?.params?.find(
+        //    (param) => param.name === 'inputName'
+        //  )?.value;
+        //  if (!inputName) return;
+          
           //const res = await obs.call('GetInputAudioTracks', { inputName });
-          return res.inputAudioTracks;
+         // return res.inputAudioTracks;
         },
       },
     ],
