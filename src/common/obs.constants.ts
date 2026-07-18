@@ -1215,8 +1215,8 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
             (param) => param.name === 'inputName'
           )?.value;
           if (!inputName) return;
-
-          const res = await obs.call('GetInputAudioTracks', { inputName });
+          //The line below is causing edits to not be allowed for the SetInputAudioTracks call.
+          //const res = await obs.call('GetInputAudioTracks', { inputName });
           return res.inputAudioTracks;
         },
       },
