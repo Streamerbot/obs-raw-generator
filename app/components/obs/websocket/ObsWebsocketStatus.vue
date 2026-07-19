@@ -42,35 +42,37 @@ const { obs, obsInfo, isConnected, error, url, connect, disconnect, connecting }
           </UTooltip>
         </UFieldGroup>
 
-        <template v-if="obsInfo">
+        <div class="hidden sm:flex items-center gap-1 *:truncate">
+          <template v-if="obsInfo">
+            <UBadge
+              color="neutral"
+              leading-icon="simple-icons:obsstudio"
+              class="text-muted font-mono"
+            >
+              OBS Studio {{ obsInfo.obsVersion }}
+            </UBadge>
+            <UBadge color="neutral" leading-icon="mdi:connection" class="text-muted font-mono">
+              OBS WebSocket {{ obsInfo.obsWebSocketVersion }}
+            </UBadge>
+            <UBadge color="neutral" leading-icon="mdi:code-json" class="text-muted font-mono">
+              RPC v{{ obsInfo.rpcVersion }}
+            </UBadge>
+            <UBadge
+              color="neutral"
+              leading-icon="mdi:desktop-tower-monitor"
+              class="text-muted font-mono"
+            >
+              {{ obsInfo.platformDescription }}
+            </UBadge>
+          </template>
           <UBadge
+            v-else-if="url"
             color="neutral"
-            leading-icon="simple-icons:obsstudio"
+            leading-icon="mdi:remote-desktop"
             class="text-muted font-mono"
+            >{{ url }}</UBadge
           >
-            OBS Studio {{ obsInfo.obsVersion }}
-          </UBadge>
-          <UBadge color="neutral" leading-icon="mdi:connection" class="text-muted font-mono">
-            OBS WebSocket {{ obsInfo.obsWebSocketVersion }}
-          </UBadge>
-          <UBadge color="neutral" leading-icon="mdi:code-json" class="text-muted font-mono">
-            RPC v{{ obsInfo.rpcVersion }}
-          </UBadge>
-          <UBadge
-            color="neutral"
-            leading-icon="mdi:desktop-tower-monitor"
-            class="text-muted font-mono"
-          >
-            {{ obsInfo.platformDescription }}
-          </UBadge>
-        </template>
-        <UBadge
-          v-else-if="url"
-          color="neutral"
-          leading-icon="mdi:remote-desktop"
-          class="text-muted font-mono"
-          >{{ url }}</UBadge
-        >
+        </div>
       </div>
     </UTheme>
   </div>

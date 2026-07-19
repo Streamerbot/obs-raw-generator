@@ -148,7 +148,7 @@ function copyObsRawCPH() {
     }"
   />
 
-  <div class="grid grid-cols-2 gap-4 py-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
     <UCard v-if="selectedRequest" :ui="{ body: 'p-0!', header: 'px-4!' }">
       <template #header>
         <div class="flex items-center justify-between">
