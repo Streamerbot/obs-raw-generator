@@ -23,6 +23,13 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/': { prerender: true },
+    '/**': { prerender: true },
+  },
+
+  nitro: {
+    prerender: {
+      autoSubfolderIndex: false
+    }
   },
 
   experimental: {
