@@ -68,22 +68,26 @@ async function loadValues(): Promise<void> {
     label-key="label"
     value-key="value"
     label="Value"
-    density="compact"
-    :hint="param.description"
-    persistent-hint
   />
 
   <UTextarea
     v-else-if="param.type === ObsParamType.OBJECT"
     v-model="value"
     label="JSON Value"
-    density="compact"
-    :hint="param.description"
-    persistent-hint
-    validate-on-blur
-    auto-grow
-    :rules="[isValidJson(value) || 'Invalid JSON']"
-  />
+    placeholder="Enter a valid JSON string"
+  >
+    <template #trailing>
+      <UBadge v-if="value && isValidJson(value)" color="success" variant="soft" leading-icon="mdi:check">
+        Valid JSON
+      </UBadge>
+      <UBadge v-else-if="value && !isValidJson(value)" color="error" variant="soft" leading-icon="mdi:alert">
+        Invalid JSON
+      </UBadge>
+      <span v-else>
+
+      </span>
+    </template>
+  </UTextarea>
 
   <USelect
     v-else-if="selectOptions?.length"
@@ -92,9 +96,7 @@ async function loadValues(): Promise<void> {
     label-key="title"
     value-key="value"
     label="Value"
-    density="compact"
-    :hint="param.description"
   />
 
-  <UInput v-else v-model="value" label="Value" density="compact" :hint="param.description" />
+  <UInput v-else v-model="value" label="Value" />
 </template>
