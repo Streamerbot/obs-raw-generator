@@ -3,8 +3,10 @@ allowBuilds:
   '@tailwindcss/oxide': false
   bufferutil: true
   esbuild: false
+  sharp: true
   unrs-resolver: false
   vue-demi: false
+  workerd: true
 minimumReleaseAgeExclude:
   - '@nuxt/kit@4.5.0'
   - '@nuxtjs/robots@6.1.3'

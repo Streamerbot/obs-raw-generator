@@ -5,7 +5,7 @@ const { isConnected, sendRequest } = useObsWebsocket();
 const { copy, isSupported } = useClipboard();
 
 const route = useRoute();
-const requestParam = route.params.request as string;
+const requestParam = route.params.request as string || 'get-version';
 
 const selectedRequest = computed(() => {
   return obsRequestTypeOptions.find((option) => option.name === requestName.value);
@@ -15,9 +15,16 @@ const requestName = computed(() => {
 });
 const description = computed(() => selectedRequest.value?.description || '');
 
+useSeoMeta({
+  title: `${requestName.value} | Streamer.bot OBS Raw Generator`,
+  description: description.value || '',
+  ogTitle: `${requestName.value} | Streamer.bot OBS Raw Generator`,
+  ogDescription: description.value || '',
+});
+
 defineOgImage('OgImageDefault', {
-  headline: 'OBS Request',
-  title: requestName.value || 'Request',
+  headline: 'OBS Raw Request',
+  title: requestName.value || 'OBS Raw Generator',
   description: description.value || '',
 });
 
