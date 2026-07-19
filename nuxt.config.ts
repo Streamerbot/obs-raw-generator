@@ -13,6 +13,10 @@ export default defineNuxtConfig({
     name: 'OBS Raw Generator | Streamer.bot',
   },
 
+  ogImage: {
+    zeroRuntime: true,
+  },
+
   fonts: {
     families: [
       { name: 'DM Sans', global: true },
