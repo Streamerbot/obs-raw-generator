@@ -17,6 +17,10 @@ export default defineNuxtConfig({
     zeroRuntime: true,
   },
 
+  sitemap: {
+    zeroRuntime: true
+  },
+
   fonts: {
     families: [
       { name: 'DM Sans', global: true },
@@ -31,8 +35,14 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    preset: 'cloudflare_pages_static',
     prerender: {
       autoSubfolderIndex: false
+    },
+    cloudflare: {
+      wrangler: {
+        name: 'streamerbot-obs-raw',
+      }
     }
   },
 
