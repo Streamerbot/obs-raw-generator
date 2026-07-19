@@ -9,25 +9,25 @@ const links: Array<{
     label: 'Streamer.bot',
     href: 'https://streamer.bot',
     description: 'Streamer.bot Website',
-    icon: 'IconStreamerbot',
+    icon: 'sb:logo',
   },
   {
     label: 'Docs',
     href: '/',
     description: 'Streamer.bot Documentation',
-    icon: 'IconStreamerbot',
+    icon: 'sb:logo',
   },
   {
     label: 'Speaker.bot',
     href: 'https://speaker.bot',
     description: 'Supercharged TTS for your live stream!',
-    icon: 'IconSpeakerbot',
+    icon: 'mdi:speaker-play',
   },
   {
     label: 'Extensions',
     href: 'https://extensions.streamer.bot',
     description: 'Community-made features, ready to import!',
-    icon: 'IconStreamerbotExtensions',
+    icon: 'mdi:puzzle-outline',
   },
   {
     label: 'Stream Deck Plugin',
@@ -39,7 +39,7 @@ const links: Array<{
     label: 'Streamer.bot Client',
     href: 'https://streamerbot.github.io/client/',
     description: 'Official WebSocket Client for Streamer.bot',
-    icon: 'IconStreamerbot',
+    icon: 'sb:logo',
   },
   {
     label: 'Discord',

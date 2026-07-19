@@ -1,3 +1,7 @@
+import { createResolver } from "nuxt/kit";
+
+const { resolve } = createResolver(import.meta.url)
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@vueuse/nuxt', 'nuxt-shiki', '@nuxtjs/seo'],
@@ -19,6 +23,15 @@ export default defineNuxtConfig({
       { name: 'Jost', weights: [200, 300, 400, 500, 600, 700], global: true },
       { name: 'DM Mono', weights: [300, 400, 500], global: true },
     ],
+  },
+
+  icon: {
+    customCollections: [
+      {
+        prefix: 'sb',
+        dir: resolve('./app/assets/icons/sb'),
+      }
+    ]
   },
 
   routeRules: {
