@@ -40,6 +40,7 @@ export default defineNuxtConfig({
       autoSubfolderIndex: false
     },
     cloudflare: {
+      deployConfig: true,
       wrangler: {
         name: 'streamerbot-obs-raw',
       }
