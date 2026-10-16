@@ -802,8 +802,8 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         description: 'The kind of input to be created.',
         required: true,
         getOptions: async (obs: OBSWebSocket) => {
-          const res = await obs.call('GetInputKindList');
-          return res.inputs.map((inputKinds) => inputKinds.inputKind);
+          const res = await obs.call('GetInputList');
+          return res.inputs.map((inputs) => inputs.inputKind);
         },
       },
       {
