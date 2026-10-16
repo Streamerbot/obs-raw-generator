@@ -803,7 +803,7 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         required: true,
         getOptions: async (obs: OBSWebSocket) => {
           const res = await obs.call('GetInputKindList');
-          return res.inputs.map((inputKinds) => inputKinds);
+          return res.inputKinds.map((inputKinds) => inputKinds.values());
         },
       },
       {
