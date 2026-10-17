@@ -17,8 +17,8 @@
     "@iconify-json/lucide": "^1.2.144",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/simple-icons": "^1.2.100",
+    "@nuxt/fonts": "^1.0.1",
     "@nuxt/ui": "^4.12.0",
-    "@nuxt/fonts": "^1.0.0",
     "@nuxtjs/seo": "6.0.1",
     "@streamerbot/vue": "^2.0.2",
     "@vueuse/nuxt": "15.0.0",
@@ -41,5 +41,5 @@
     "vue-tsc": "^3.3.13",
     "wrangler": "^4.151.0"
   },
-  "packageManager": "pnpm@11.13.1"
+  "packageManager": "pnpm@12.14.0"
 }
