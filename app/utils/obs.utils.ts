@@ -750,8 +750,8 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         description: 'Restrict the array to only inputs of the specified kind.',
         required: false,
         getOptions: async (obs: OBSWebSocket) => {
-          const res = await obs.call('GetInputList');
-          return res.inputs.map((inputs) => inputs.inputKind);
+          const res = await obs.call('GetInputKindList');
+          return res.inputKinds?.sort((a, b) => a.localeCompare(b)) ?? [];
         },
       },
     ],
@@ -802,8 +802,8 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         description: 'The kind of input to be created.',
         required: true,
         getOptions: async (obs: OBSWebSocket) => {
-          const res = await obs.call('GetInputList');
-          return res.inputs.map((inputs) => inputs.inputKind);
+          const res = await obs.call('GetInputKindList');
+          return res.inputKinds?.sort((a, b) => a.localeCompare(b)) ?? [];
         },
       },
       {
@@ -871,8 +871,8 @@ export const obsRequestTypeOptions: ObsRequestTypeOption[] = [
         description: 'Input kind to get the default settings for.',
         required: true,
         getOptions: async (obs: OBSWebSocket) => {
-          const res = await obs.call('GetInputList');
-          return res.inputs.map((inputs) => inputs.inputKind);
+          const res = await obs.call('GetInputKindList');
+          return res.inputKinds?.sort((a, b) => a.localeCompare(b)) ?? [];
         },
       },
     ],
