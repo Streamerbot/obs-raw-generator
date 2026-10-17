@@ -243,26 +243,28 @@ function copyObsRawCPH() {
         <div class="flex items-center justify-between">
           <span class="font-logo font-semibold tracking-tight">Request</span>
 
-          <UFieldGroup size="sm">
-            <UButton
-              color="neutral"
-              variant="subtle"
-              trailing-icon="mdi:content-copy"
-              :disabled="!isSupported"
-              @click="copyObsRawCPH"
-            >
-              Copy CPH
-            </UButton>
-            <UButton
-              color="neutral"
-              variant="subtle"
-              trailing-icon="mdi:content-copy"
-              :disabled="!isSupported"
-              @click="copyObsRaw"
-            >
-              Copy OBS Raw
-            </UButton>
-          </UFieldGroup>
+          <ClientOnly>
+            <UFieldGroup size="sm">
+              <UButton
+                color="neutral"
+                variant="subtle"
+                trailing-icon="mdi:content-copy"
+                :disabled="!isSupported"
+                @click="copyObsRawCPH"
+              >
+                Copy CPH
+              </UButton>
+              <UButton
+                color="neutral"
+                variant="subtle"
+                trailing-icon="mdi:content-copy"
+                :disabled="!isSupported"
+                @click="copyObsRaw"
+              >
+                Copy OBS Raw
+              </UButton>
+            </UFieldGroup>
+          </ClientOnly>
         </div>
       </template>
       <ObsRawCodePreview :value="formattedRequest" />
