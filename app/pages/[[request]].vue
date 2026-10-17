@@ -5,7 +5,7 @@ const { isConnected, sendRequest } = useObsWebsocket();
 const { copy, isSupported } = useClipboard();
 
 const route = useRoute();
-const requestParam = route.params.request as string || 'get-version';
+const requestParam = (route.params.request as string) || 'get-version';
 
 const selectedRequest = computed(() => {
   return obsRequestTypeOptions.find((option) => option.name === requestName.value);
@@ -37,9 +37,9 @@ const selectedParams = ref<Record<string, any[]>>({});
 const response = ref<any>({});
 
 watch(
-  selectedRequest,
-  (val, prev) => {
-    if (!val) return;
+  [selectedRequest, isConnected],
+  ([val, isConnectedVal], [prev, prevIsConnectedVal]) => {
+    if (!val || !isConnectedVal) return;
 
     if (val?.name !== prev?.name) response.value = '';
 
