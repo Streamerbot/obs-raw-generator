@@ -18,7 +18,8 @@
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/simple-icons": "^1.2.100",
     "@nuxt/ui": "^4.12.0",
-    "@nuxtjs/seo": "5.3.3",
+    "@nuxt/fonts": "^1.0.0",
+    "@nuxtjs/seo": "6.0.1",
     "@streamerbot/vue": "^2.0.2",
     "@vueuse/nuxt": "15.0.0",
     "nuxt": "^4.6.1",
@@ -32,7 +33,7 @@
   "devDependencies": {
     "@takumi-rs/core": "^2.16.2",
     "@takumi-rs/wasm": "^2.16.2",
-    "nuxtseo-layer-devtools": "^5.3.16",
+    "nuxtseo-devtools-host": "^1.0.2",
     "oxfmt": "^0.73.0",
     "oxlint": "^1.88.0",
     "type-fest": "^5.10.0",
