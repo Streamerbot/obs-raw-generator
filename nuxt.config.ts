@@ -1,6 +1,6 @@
-import { createResolver } from "nuxt/kit";
+import { createResolver } from 'nuxt/kit';
 
-const { resolve } = createResolver(import.meta.url)
+const { resolve } = createResolver(import.meta.url);
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -8,8 +8,13 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  alias: {
+    'shiki/wasm': resolve('./stubs/shiki-wasm.mjs'),
+  },
+
   shiki: {
     defaultTheme: 'vesper',
+    bundledLangs: ['json'],
   },
 
   site: {
@@ -30,8 +35,8 @@ export default defineNuxtConfig({
       {
         prefix: 'sb',
         dir: resolve('./app/assets/icons/sb'),
-      }
-    ]
+      },
+    ],
   },
 
   routeRules: {
@@ -41,21 +46,21 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'cloudflare-module',
     prerender: {
-      autoSubfolderIndex: false
+      autoSubfolderIndex: false,
     },
     cloudflare: {
       deployConfig: true,
       wrangler: {
         name: 'streamerbot-obs-raw',
-      }
-    }
+      },
+    },
   },
 
   experimental: {
     typescriptPlugin: true,
   },
 
-  compatibilityDate: '2026-06-30',
+  compatibilityDate: '2026-10-16',
 
   $development: {
     devtools: {
